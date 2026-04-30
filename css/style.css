@@ -1,0 +1,721 @@
+/* ============================================================
+   1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ И СБРОСЫ
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* Основной фон body перекрывается ниже в секции Aura (белым) */
+    background-color: #000; 
+    overflow-x: hidden;
+}
+
+/* Перекрытие фона для страниц каталога (Aura Style) */
+body {
+    background-color: #fff !important; 
+}
+
+
+/* ============================================================
+   2. НАВИГАЦИЯ (NAVBAR)
+   ============================================================ */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    z-index: 1000;
+    /* Базовый градиент (перекрывается белым фоном ниже) */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%);
+    transition: background 0.3s ease;
+}
+
+/* Модификация Navbar для Aura (Белый фон и черные элементы) */
+.navbar {
+    background: #fff !important;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.nav-left { display: flex; align-items: center; gap: 35px; }
+.logo-img { height: 28px; width: auto; display: block; }
+
+.main-menu { display: flex; gap: 25px; }
+
+/* Стили ссылок меню с учетом правок Aura */
+.main-menu a {
+    text-decoration: none;
+    color: #000 !important; /* Принудительно черный */
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 400;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.main-menu a:hover { opacity: 1; }
+.main-menu a.sale { color: #ffbaba; }
+
+.nav-right { display: flex; gap: 15px; }
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+/* Иконки в навигации (черные) */
+.nav-right .icon-btn img { 
+    height: 22px; 
+    width: auto; 
+    color: #000 !important;
+    filter: none !important; 
+}
+
+.logo-link img {
+    filter: none !important;
+}
+
+
+/* ============================================================
+   3. ВЫПАДАЮЩЕЕ МЕНЮ (MEGA MENU)
+   ============================================================ */
+.dropdown-content {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    display: none;
+    padding: 50px 80px;
+    z-index: 999;
+    color: #000;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.dropdown-content.show { display: block; }
+
+.dropdown-inner {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.menu-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+}
+
+.menu-column a {
+    display: block;
+    text-decoration: none;
+    color: #000;
+    padding: 8px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-column a:hover { color: #888; }
+
+.menu-images { display: flex; gap: 20px; }
+
+.menu-card { 
+    position: relative; 
+    width: 250px; 
+    height: 350px; 
+    overflow: hidden; 
+}
+
+.menu-card img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform 0.6s ease; 
+}
+
+.menu-card:hover img { transform: scale(1.05); }
+
+.menu-card span {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   4. САЙДБАРЫ, АВТОРИЗАЦИЯ И КОРЗИНА
+   ============================================================ */
+.overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    display: none; z-index: 2000; backdrop-filter: blur(2px);
+}
+
+.overlay.active { display: block; }
+
+.side-panel {
+    position: fixed; right: -450px; top: 0; width: 450px; height: 100%;
+    background: #fff; z-index: 2001; transition: 0.4s ease;
+    padding: 80px 40px; color: #000;
+}
+
+.side-panel.active { right: 0; }
+
+.close-btn { 
+    position: absolute; top: 20px; right: 20px; 
+    background: none; border: none; font-size: 30px; cursor: pointer; 
+}
+
+/* Стили авторизации */
+.sidebar-auth-choice {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.auth-tab {
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    color: #ccc;
+    background: none;
+    border: none;
+    text-transform: uppercase;
+    position: relative;
+    transition: 0.3s;
+}
+
+.auth-tab.active { color: #000; }
+
+.auth-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #000;
+}
+
+.auth-form .input-group { margin-bottom: 20px; }
+
+.auth-form label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+}
+
+.auth-submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    letter-spacing: 1px;
+}
+
+#reg-form { display: none; }
+
+/* Стили корзины */
+.cart-items {
+    max-height: 400px; 
+    overflow-y: auto;  
+    padding-right: 10px;
+}
+
+.remove-item-btn {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    cursor: pointer;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 5px 0;
+    margin-top: 5px;
+}
+
+.remove-item-btn:hover { text-decoration: underline; }
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 60%;
+    color: #888;
+}
+
+.empty-state p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 20px 0;
+}
+
+.heart-icon-placeholder {
+    font-size: 60px;
+    font-weight: 100;
+    color: #eee;
+}
+
+
+/* ============================================================
+   5. HERO SECTION (ГЛАВНАЯ)
+   ============================================================ */
+.hero-section {
+    width: 100%;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background-color: #fff;
+}
+
+.second-hero {
+    min-height: 100vh; 
+    border-top: 20px solid #ffffff; 
+    align-items: center; 
+}
+
+.hero-caption { 
+    padding-bottom: 80px; 
+    text-align: center; 
+}
+
+.hero-caption h1 { 
+    color: #fff; 
+    font-size: 14px; 
+    text-transform: uppercase; 
+    letter-spacing: 6px; 
+    font-weight: 300; 
+}
+
+.second-hero .hero-caption h1 {
+    color: #000;
+    text-shadow: none;
+}
+
+
+/* ============================================================
+   6. КАТАЛОГ ТОВАРОВ (LICHI STYLE)
+   ============================================================ */
+.catalog-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 100px 40px 50px; 
+    background-color: #fff;
+}
+
+/* Хедер каталога и центрирование крошек */
+.catalog-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr; 
+    align-items: center;
+    margin-bottom: 50px;
+    width: 100%;
+}
+
+.breadcrumb {
+    grid-column: 2; 
+    text-align: center;
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999 !important;
+}
+
+.breadcrumb-link {
+    text-decoration: none !important;
+    color: #000 !important;
+    transition: opacity 0.3s ease;
+}
+
+.breadcrumb-link:hover { opacity: 0.5; }
+
+.filters-bar {
+    grid-column: 3; 
+    justify-self: end; 
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #000;
+}
+
+/* Сетка товаров */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px 25px; 
+}
+
+.product-card {
+    text-decoration: none;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === ВЫРАВНИВАНИЕ ВЫСОТЫ КАРТИНОК И АНИМАЦИЯ === */
+.product-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3; /* Фиксирует высоту всех карточек */
+    overflow: hidden;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.product-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Обрезает лишнее, сохраняя высоту */
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+/* Анимация увеличения при наведении */
+.product-card:hover .product-image-wrapper img {
+    transform: scale(1.08); 
+}
+
+/* Кнопки действий на карточке (сердечко/корзина) */
+.product-card .actions-overlay button {
+    background: rgba(255,255,255, 0.8);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.product-card .actions-overlay button img {
+    filter: brightness(0); /* Делает иконки черными */
+}
+
+.wishlist-heart {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    z-index: 2;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+}
+
+/* Информация о товаре */
+.product-info { text-align: center; }
+
+.product-title {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    color: #333;
+    padding: 0 15px;
+}
+
+.product-price {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Выбор цвета */
+.product-colors {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.color-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid #e5e5e5;
+    position: relative;
+}
+
+.color-circle.active::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border: 1px solid #000;
+    border-radius: 50%;
+}
+
+
+/* ============================================================
+   7. СТРАНИЦА ТОВАРА (ITEM.PHP)
+   ============================================================ */
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.wishlist-btn-main {
+    width: 60px;
+    height: 54px; 
+    border: 1px solid #000;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ============================================================
+   8. ФИНАЛЬНЫЙ FOOTER (LICHI STYLE)
+   ============================================================ */
+.footer {
+    display: block !important;
+    position: relative;
+    z-index: 10;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 80px 40px !important;
+    width: 100% !important;
+    margin-top: auto; 
+    border-top: 1px solid #e5e5e5;
+}
+
+.footer-social { text-align: center; margin-bottom: 60px; }
+.footer-social p { 
+    color: #000 !important; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.social-icons { display: flex; justify-content: center; gap: 25px; }
+.social-icons img { height: 18px; filter: brightness(0); opacity: 0.7; }
+
+.footer-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.footer-column h3 {
+    color: #000 !important;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 25px;
+}
+
+.footer-column ul { list-style: none; padding: 0; }
+.footer-column ul li { margin-bottom: 12px; }
+
+.footer-column a {
+    color: #000 !important;
+    text-decoration: none !important;
+    font-size: 11px;
+    opacity: 0.6;
+    transition: 0.3s;
+}
+.footer-column a:hover { opacity: 1; }
+
+.support-phone { font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #000 !important; }
+.support-email { font-size: 11px; color: #666 !important; }
+
+.footer-country { margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; }
+.country-label { font-size: 10px; color: #999; text-transform: uppercase; display: block; }
+.country-value { font-size: 12px; color: #000 !important; }
+
+.app-promo { font-size: 11px; color: #999 !important; line-height: 1.4; }
+
+
+/* ============================================================
+   9. АДАПТИВНОСТЬ (MEDIA QUERIES)
+   ============================================================ */
+/* ============================================================
+   11. МОБИЛЬНАЯ АДАПТАЦИЯ (AURA MOBILE FIX)
+   ============================================================ */
+
+/* Этот блок сработает на экранах шириной до 768px */
+@media (max-width: 768px) {
+    
+    /* 1. Глобальные отступы и контейнер */
+    .catalog-container {
+        padding: 80px 10px 40px !important; /* Уменьшаем боковые поля */
+    }
+
+    /* 2. Сетка товаров: переходим на 2 колонки */
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 20px 10px !important; /* Компактные зазоры */
+        padding: 0 !important;
+    }
+
+    /* 3. Картинки и Анимация */
+    .product-image-wrapper {
+        aspect-ratio: 2 / 3 !important; /* Сохраняем единую высоту карточек */
+        margin-bottom: 8px !important;
+    }
+
+    .product-image-wrapper img {
+        transition: transform 0.4s ease !important;
+    }
+
+    /* На мобилках анимация активируется при нажатии */
+    .product-card:active .product-image-wrapper img {
+        transform: scale(1.05) !important;
+    }
+
+    /* 4. Кнопки действий (сердечко и корзина) */
+    /* Делаем их чуть крупнее для удобства нажатия пальцем */
+    .product-actions {
+        top: 5px !important;
+        right: 5px !important;
+        gap: 5px !important;
+    }
+
+    .product-actions .icon-btn {
+        width: 32px !important;
+        height: 32px !important;
+        background: rgba(255, 255, 255, 0.9) !important; /* Светлый фон для контраста */
+    }
+
+    .product-actions img {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    /* 5. Текст и Цены */
+    .product-info {
+        padding: 0 4px !important;
+    }
+
+    .product-title {
+        font-size: 11px !important; /* Читабельный размер для мобилок */
+        height: 32px !important; /* Фиксируем высоту, чтобы сетка не "прыгала" */
+        overflow: hidden;
+        margin-bottom: 4px !important;
+        line-height: 1.2 !important;
+    }
+
+    .product-price {
+        font-size: 13px !important;
+        font-weight: 700 !important;
+    }
+
+    /* 6. Хедер сайта (Навигация) */
+    .navbar {
+        padding: 10px !important;
+        flex-direction: column; /* Ставим логотип над меню, если не влазит */
+        gap: 10px;
+    }
+
+    .main-menu {
+        display: flex !important; /* Возвращаем меню */
+        gap: 15px !important;
+        justify-content: center;
+        width: 100%;
+        overflow-x: auto; /* Добавляем прокрутку, если вкладок много */
+        padding-bottom: 5px;
+        white-space: nowrap; /* Чтобы пункты не переносились на новую строку */
+    }
+
+    .main-menu a {
+        font-size: 10px !important; /* Чуть уменьшаем шрифт для мобилок */
+        letter-spacing: 1px !important;
+    }
+
+    .nav-left {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .logo-img {
+        height: 18px !important;
+    }
+
+    /* Скрываем правую часть иконок или делаем их компактнее, 
+       чтобы не мешали вкладкам */
+    .nav-right {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        gap: 5px !important;
+    }
+    .dropdown-content {
+        top: 50px;
+        padding: 20px;
+        overflow-y: auto;
+        max-height: 80vh;
+    }
+    
+    .dropdown-inner {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .menu-column {
+        text-align: center;
+        min-width: 100%;
+    }
+}

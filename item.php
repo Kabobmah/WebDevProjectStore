@@ -8,8 +8,8 @@ $user_favs = [];
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
-// Запрос
-$sql = "SELECT p.*, c.name as cat_name FROM products p 
+// Запрос (Добавил name_en и description_en для корректного перевода через translate_db)
+$sql = "SELECT p.*, c.name as cat_name, c.name_en as cat_name_en FROM products p 
         LEFT JOIN categories c ON p.category_id = c.id 
         WHERE p.id = $id";
 
@@ -28,20 +28,30 @@ if ($isDeleted === 1 && $userRole !== 'admin') {
     include 'includes/header.php';
     ?>
     <div style="text-align: center; padding: 150px 20px; font-family: sans-serif; background: #fff; min-height: 50vh;">
-        <h1 style="font-weight: 300; letter-spacing: 2px; color: #000;">ЭТОГО ТОВАРА БОЛЬШЕ НЕТ</h1>
-        <p style="color: #888; margin-top: 20px; font-size: 14px;">Возможно, он был распродан или снят с производства.</p>
-        <a href="index.php" style="display: inline-block; margin-top: 30px; color: #000; text-decoration: underline; font-size: 12px; letter-spacing: 1px;">ВЕРНУТЬСЯ В КАТАЛОГ</a>
+        <!-- Используем ключи из JSON для сообщения об удалении -->
+        <h1 style="font-weight: 300; letter-spacing: 2px; color: #000;"><?= __('msg_not_available') ?></h1>
+        <p style="color: #888; margin-top: 20px; font-size: 14px;"><?= __('msg_sold_out') ?></p>
+        <a href="index.php" style="display: inline-block; margin-top: 30px; color: #000; text-decoration: underline; font-size: 12px; letter-spacing: 1px;"><?= __('back_to_catalog') ?></a>
     </div>
     <?php
     include 'includes/footer.php';
     exit; // Важно: полностью прекращаем загрузку остального HTML
 }
+
+// Проверяем, сменил ли пользователь язык (твой блок без изменений)
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
+    $_SESSION['lang'] = $lang;
+}
+
+// По умолчанию ставим русский
+$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 ?>
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?= $current_lang ?>">
 <head>
     <meta charset="utf-8">
-    <title><?php echo $product['name']; ?> | AURA</title>
+    <title><?= translate_db($product, 'name') ?> | AURA</title>
     <link rel="stylesheet" href="css/style.css">
     <script>
         const userIsLogged = <?php echo $userIsLogged; ?>;
@@ -80,19 +90,24 @@ if ($isDeleted === 1 && $userRole !== 'admin') {
 
     <div class="product-sidebar">
             <div class="breadcrumb">
-                <a href="index.php">Главная</a> / <?php echo ($product['cat_name'] ?? 'Новинки'); ?>
+                <a href="index.php"><?= __('nav_home') ?></a> / 
+                <!-- Перевод названия категории через вспомогательный массив в БД -->
+                <?php 
+                    $cat_data = ['name' => $product['cat_name'], 'name_en' => $product['cat_name_en']];
+                    echo translate_db($cat_data, 'name'); 
+                ?>
             </div>
             
-            <h1 class="item-name"><?php echo $product['name']; ?></h1>
+            <h1 class="item-name"><?= translate_db($product, 'name') ?></h1>
             <div class="item-price"><?php echo number_format($product['price'], 0, '', ' '); ?> ₸</div>
             
             <div class="item-description">
-                <?php echo nl2br($product['description']); ?>
+                <?= nl2br(translate_db($product, 'description')) ?>
             </div>
 
             <div class="product-actions" style="display: flex; gap: 10px; align-items: center; margin-top: 30px;">
                 <button class="add-btn" onclick="addToCart(<?php echo $product['id']; ?>)" style="flex: 1;">
-                    ДОБАВИТЬ В КОРЗИНУ
+                    <?= __('btn_add_to_cart') ?>
                 </button>
     
                 <?php

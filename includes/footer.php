@@ -1,14 +1,18 @@
 <footer class="footer">
         <div class="footer-grid">
             <div class="footer-column">
-                <h3>Компания</h3>
+                <!-- Заголовок "Компания" -->
+                <h3><?= __('footer_company') ?></h3>
                 <ul>
-                    <li><a href="about.php">О бренде</a></li>
-                    <li><a href="https://github.com/Kabobmah">Контакты</a></li>
+                    <!-- Ссылка "О бренде" -->
+                    <li><a href="about.php"><?= __('footer_about') ?></a></li>
+                    <!-- Ссылка "Контакты" -->
+                    <li><a href="https://github.com/Kabobmah"><?= __('footer_contacts') ?></a></li>
                 </ul>
             </div>
             <div class="footer-column">
-                <h3>Поддержка</h3>
+                <!-- Заголовок "Поддержка" -->
+                <h3><?= __('footer_support') ?></h3>
                 <p>+7 747 154 55 55</p>
                 <p>support@aurastore.com</p>
             </div>

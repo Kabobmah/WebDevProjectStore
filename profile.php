@@ -14,19 +14,27 @@ $user_id = $_SESSION['user_id'];
 $user_query = $conn->query("SELECT full_name, email FROM users WHERE id = $user_id");
 $user = $user_query->fetch_assoc();
 
-
-
 // 2. Получаем заказы пользователя
 $orders_query = $conn->query("SELECT * FROM orders WHERE user_id = $user_id ORDER BY order_date DESC");
+
+// Проверяем, сменил ли пользователь язык
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
+    $_SESSION['lang'] = $lang;
+}
+
+// По умолчанию ставим русский
+$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
+
 ?>
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?= $current_lang ?>">
 <head>
     <meta charset="utf-8">
-    <title>Мой Аккаунт | AURA</title>
+    <title><?= __('nav_profile') ?> | AURA</title>
     <script>
-        const userIsLogged = true; // Так как мы выше уже проверили сессию, здесь всегда true
+        const userIsLogged = true;
         const userRole = '<?php echo $_SESSION['role'] ?? 'user'; ?>';
     </script>
     <link rel="stylesheet" href="css/style.css">
@@ -50,34 +58,34 @@ $orders_query = $conn->query("SELECT * FROM orders WHERE user_id = $user_id ORDE
     <!-- --------------------------------------MAIN----------------------------------->
     <div class="profile-container">
         <div class="user-info">
-            <h2>Личные данные</h2>
+            <h2><?= __('profile_personal_data') ?></h2>
             <div class="info-block">
-                <label>Имя пользователя</label>
+                <label><?= __('profile_label_name') ?></label>
                 <span><?php echo htmlspecialchars($user['full_name']); ?></span>
             </div>
             <div class="info-block">
                 <label>Email</label>
                 <span><?php echo htmlspecialchars($user['email']); ?></span>
             </div>
-            <a href="auth/logout.php" style="color: red; font-size: 12px; text-decoration: none;">ВЫЙТИ ИЗ АККАУНТА</a>
+            <a href="auth/logout.php" style="color: red; font-size: 12px; text-decoration: none;"><?= mb_strtoupper(__('btn_logout')) ?></a>
         </div>
 
         <div class="user-orders">
-            <h2>Мои заказы</h2>
+            <h2><?= __('profile_my_orders') ?></h2>
             <?php if ($orders_query->num_rows > 0): ?>
                 <?php while ($order = $orders_query->fetch_assoc()): ?>
                     <div class="order-card">
                         <div class="order-header">
-                            <span>ЗАКАЗ #<?php echo $order['id']; ?></span>
+                            <span><?= __('order_word') ?> #<?php echo $order['id']; ?></span>
                             <span><?php echo date('d.m.Y', strtotime($order['order_date'])); ?></span>
                         </div>
                         
                         <div style="margin-bottom: 15px;">
                             <?php
                             $order_id = $order['id'];
-                            // Получаем товары этого заказа
+                            // Добавили p.name_en в запрос для корректного перевода товаров в истории
                             $items_query = $conn->query("
-                                SELECT oi.quantity, p.name, p.price 
+                                SELECT oi.quantity, p.name, p.name_en, p.price 
                                 FROM order_items oi 
                                 JOIN product_variants pv ON oi.product_variant_id = pv.id 
                                 JOIN products p ON pv.product_id = p.id 
@@ -86,23 +94,26 @@ $orders_query = $conn->query("SELECT * FROM orders WHERE user_id = $user_id ORDE
                             while ($item = $items_query->fetch_assoc()):
                             ?>
                                 <div class="order-item">
-                                    <span><?php echo $item['name']; ?> x<?php echo $item['quantity']; ?></span>
+                                    <span><?= translate_db($item, 'name') ?> x<?php echo $item['quantity']; ?></span>
                                     <span><?php echo number_format($item['price'] * $item['quantity'], 0, '', ' '); ?> ₸</span>
                                 </div>
                             <?php endwhile; ?>
                         </div>
 
-                        <div class="order-header" style="border-top: 1px solid #eee; pt: 10px; margin-bottom: 0;">
-                            <span>ИТОГО:</span>
+                        <div class="order-header" style="border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 0;">
+                            <span><?= __('order_total') ?>:</span>
                             <span><?php echo number_format($order['total_amount'], 0, '', ' '); ?> ₸</span>
                         </div>
                         <div style="font-size: 11px; margin-top: 5px;" class="status-<?php echo $order['status']; ?>">
-                            Статус: <?php echo strtoupper($order['status']); ?>
+                            <?= __('order_status') ?>: <?php 
+                                // Перевод статусов (если они фиксированные, можно через __())
+                                echo strtoupper($order['status']); 
+                            ?>
                         </div>
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <p style="color: #888;">У вас пока нет заказов.</p>
+                <p style="color: #888;"><?= __('msg_no_orders') ?></p>
             <?php endif; ?>
         </div>
     </div>

@@ -1,6 +1,7 @@
-<?php
+<?php #language support
+
 session_start();
-require_once 'includes/db.php';
+require_once 'includes/db.php'; 
 
 // Проверка авторизации для корректной работы JS
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';

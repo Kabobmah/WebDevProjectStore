@@ -8,7 +8,7 @@ $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user' ;
 
 // Переменная $current_lang уже определена в db.php, 
-// поэтому здесь мы её просто используем для тега <html>
+// поэтому здесь мы её просто используем    для тега <html>
 ?>
 <!DOCTYPE html>
 <html lang="<?= $current_lang ?>">

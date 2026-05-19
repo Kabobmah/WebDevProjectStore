@@ -5,7 +5,7 @@ require_once 'includes/db.php';
 
 // Проверка авторизации для корректной работы JS
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
-$userRole = $_SESSION['role'] ?? 'user';
+$userRole = $_SESSION['role'] ?? 'user' ;
 
 // Переменная $current_lang уже определена в db.php, 
 // поэтому здесь мы её просто используем для тега <html>

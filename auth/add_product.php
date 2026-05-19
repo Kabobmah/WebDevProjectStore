@@ -8,10 +8,13 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Чистим данные
     $name = trim($_POST['name']);
+    $name_en = trim($_POST['name_en']); // Забираем EN название
     $price = (float)$_POST['price'];
     $cat_id = (int)$_POST['category_id'];
     $desc = trim($_POST['description']);
+    $desc_en = trim($_POST['description_en']); // Забираем EN описание
 
     $color = trim($_POST['color']);
     $size = trim($_POST['size']);
@@ -23,26 +26,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $image_name = time() . '_' . uniqid() . '.' . $extension;
         $target = "../src/" . $image_name;
 
-        // ВАЖНО: здесь tmp_name, а не tmp_path
         if (move_uploaded_file($_FILES['main_image']['tmp_name'], $target)) {
             
-            // Исправленная строка: 5 переменных = 5 символов типов "sdiss"
-            $stmt = $conn->prepare("INSERT INTO products (name, price, category_id, description, main_image) VALUES (?, ?, ?, ?, ?)");
-            $stmt->bind_param("sdiss", $name, $price, $cat_id, $desc, $image_name);
+            // 1. ОБНОВЛЕННЫЙ ЗАПРОС: Добавляем колонки name_en и description_en
+            // В строке типов теперь 7 символов: "ssdssis" (s-string, d-double, i-int)
+            $stmt = $conn->prepare("INSERT INTO products (name, name_en, price, category_id, description, description_en, main_image) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            
+            // 2. ОБНОВЛЕННЫЙ BIND_PARAM: Передаем 7 переменных
+            $stmt->bind_param("ssdssis", 
+                $name,          // name
+                $name_en,       // name_en
+                $price,         // price
+                $cat_id,        // category_id
+                $desc,          // description
+                $desc_en,       // description_en
+                $image_name     // main_image
+            );
             
             if ($stmt->execute()) {
-            $new_product_id = $conn->insert_id;
+                $new_product_id = $conn->insert_id;
 
-            // 3. Вставляем данные в таблицу product_variants
-            $stmt_variant = $conn->prepare("INSERT INTO product_variants (product_id, color, size, stock) VALUES (?, ?, ?, ?)");
-            $stmt_variant->bind_param("issi", $new_product_id, $color, $size, $stock);
-                            
+                // 3. Вставляем данные в таблицу product_variants
+                $stmt_variant = $conn->prepare("INSERT INTO product_variants (product_id, color, size, stock) VALUES (?, ?, ?, ?)");
+                $stmt_variant->bind_param("issi", $new_product_id, $color, $size, $stock);
+                                
                 if ($stmt_variant->execute()) {
                     header("Location: ../admin.php?success=1");
                     exit();
                 } else {
                     echo "Ошибка при создании варианта: " . $conn->error;
                 }
+            } else {
+                echo "Ошибка при выполнении запроса к БД: " . $stmt->error;
+            }
         } else {
             echo "Ошибка: Не удалось переместить файл в папку src. Проверьте права папки.";
         }
@@ -50,6 +66,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "Ошибка: Файл не загружен или поврежден. Код ошибки: " . $_FILES['main_image']['error'];
     }
 }
-
-    
-}
+?>

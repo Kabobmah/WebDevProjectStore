@@ -26,7 +26,14 @@ if (isset($_SESSION['user_id'])) {
 
 
 
+// Проверяем, сменил ли пользователь язык
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
+    $_SESSION['lang'] = $lang;
+}
 
+// По умолчанию ставим русский
+$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 
 ?>
 

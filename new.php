@@ -6,14 +6,6 @@ require_once 'includes/db.php';
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user';
 
-// Проверяем, сменил ли пользователь язык
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
-    $_SESSION['lang'] = $lang;
-}
-
-// По умолчанию ставим русский
-$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 //-----------------------------------------------------------------
 
@@ -31,26 +23,28 @@ if (isset($_SESSION['user_id'])) {
 }
 
 //-----------------------------------------------------------------
+// Добавлена выборка name_en для корректного перевода товаров
 $sql = "SELECT p.*, c.name as cat_name FROM products p 
         LEFT JOIN categories c ON p.category_id = c.id
         WHERE p.is_deleted = 0 
         ORDER BY p.id DESC";
 $result = $conn->query($sql);
 
+// Проверяем, сменил ли пользователь язык
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
+    $_SESSION['lang'] = $lang;
+}
+
+// По умолчанию ставим русский
+$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 ?>
 
-
-
-
-
-
-
-
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="<?php echo $current_lang; ?>">
 <head>
     <meta charset="utf-8">
-    <title>Каталог | AURA</title>
+    <title><?php echo __('nav_catalog'); ?> | AURA</title>
     <link rel="stylesheet" href="css/style.css">
     <script>
         const userIsLogged = <?php echo $userIsLogged; ?>;
@@ -84,7 +78,8 @@ $result = $conn->query($sql);
 <!-- --------------------------------------MAIN----------------------------------->
 <main class="catalog-container" style="padding-top: 140px;">
     <div style="text-align:center; margin-bottom: 40px;">
-        <h1 style="font-size: 20px; font-weight: normal; letter-spacing: 2px;">КАТАЛОГ</h1>
+        <!-- Перевод заголовка КАТАЛОГ -->
+        <h1 style="font-size: 20px; font-weight: normal; letter-spacing: 2px;"><?php echo mb_strtoupper(__('nav_catalog')); ?></h1>
     </div>
 
     <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 0 40px;">
@@ -96,11 +91,14 @@ $result = $conn->query($sql);
             <div class="product-card-wrapper" style="position: relative;">
                 <a href="item.php?id=<?php echo $row['id']; ?>" class="product-card" style="text-decoration:none; color:#000; display: block;">
                     <div class="product-image-wrapper">
-                        <img src="src/<?php echo $row['main_image']; ?>">
+                        <img src="src/<?php echo $row['main_image']; ?>" style="width: 100%;">
                     </div>
                     
                     <div style="text-align:center; padding:15px;">
-                        <div style="font-size:11px; text-transform:uppercase; margin-bottom:5px;"><?php echo $row['name']; ?></div>
+                        <!-- Перевод названия товара через translate_db -->
+                        <div style="font-size:11px; text-transform:uppercase; margin-bottom:5px;">
+                            <?php echo translate_db($row, 'name'); ?>
+                        </div>
                         <div style="font-weight:500;"><?php echo number_format($row['price'], 0, '', ' '); ?> ₸</div>
                     </div>
                 </a>

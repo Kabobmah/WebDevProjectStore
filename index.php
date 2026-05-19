@@ -26,13 +26,14 @@ if (isset($_SESSION['user_id'])) {
 
 
 
-// Проверяем, сменил ли пользователь язык
+// checking lang
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
     $_SESSION['lang'] = $lang;
 }
 
-// По умолчанию ставим русский
+
+// default russian
 $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 
 ?>
@@ -51,7 +52,7 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
     <title>Aura Store</title>
     <link rel="stylesheet" href="css/style.css">
     <script>
-        // Передаем статус из PHP в JS
+        // phph status parse
         const userIsLogged = <?php echo $userIsLogged; ?>;
         const userRole = '<?php echo $userRole; ?>';
     </script>
@@ -72,6 +73,94 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
             width: 100%; padding: 20px; background: #000; color: #fff; border: none; 
             cursor: pointer; letter-spacing: 2px; font-size: 11px; margin-top: auto;
         }
+        .apple-container {
+            height: 300vh !important;
+            position: relative !important;
+            background-color: #000 !important;
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box;
+        }
+
+        .apple-sticky {
+            position: sticky !important;
+            position: -webkit-sticky !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            background-color: #000 !important;
+            box-sizing: border-box;
+        }
+
+        .apple-track {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            width: 300vw !important; 
+            height: 100% !important;
+            will-change: transform !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .apple-slide {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 100vw !important;
+            height: 100vh !important;
+            flex-shrink: 0 !important;
+            position: relative !important;
+            overflow: hidden !important;
+            box-sizing: border-box;
+        }
+
+        .hero-section {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+            background: #000 !important;
+        }
+
+        .hero-video, .hero-img {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            min-width: 100% !important;
+            min-height: 100% !important;
+            width: auto !important;
+            height: auto !important;
+            transform: translate(-50%, -50%) !important;
+            object-fit: cover !important;
+            z-index: 1 !important;
+        }
+
+        .apple-pagination {
+            position: absolute !important;
+            bottom: 40px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            display: flex !important;
+            gap: 12px !important;
+            z-index: 100 !important;
+        }
+
+        .apple-dot {
+            width: 8px !important;
+            height: 8px !important;
+            border-radius: 50% !important;
+            background: #fff !important;
+            opacity: 0.3 !important;
+            transition: opacity 0.3s ease !important;
+        }
+
+        .apple-dot.active {
+            opacity: 1 !important;
+        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -82,20 +171,104 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 <?php include 'includes/header.php'; ?>
 
 <!-- --------------------------------------MAIN----------------------------------->
+<div class="apple-container">
+    <main class="apple-sticky">
+        <div class="apple-track">
+            
+            <div class="apple-slide">
+                <div class="hero-section">
+                    <video autoplay muted loop playsinline class="hero-video">
+                        <source src="src/6a045143c276a_720.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
 
-    <main class="hero-section" style="background-image: url('src/f.jpg');">
-        <div class="hero-caption">
-            <h1>Призрачная красота</h1>
+            <div class="apple-slide">
+                <div class="hero-section">
+                    <img src="src/f.jpg" alt="Эстетика" class="hero-img">
+                </div>
+            </div>
+
+            <div class="apple-slide">
+                <div class="hero-section">
+                    <img src="src/7foto.jpg" alt="Коллекция" class="hero-img">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="apple-pagination">
+            <div class="apple-dot active"></div>
+            <div class="apple-dot"></div>
+            <div class="apple-dot"></div>
         </div>
     </main>
-    <section class="hero-section second-hero" style="background-image: url('src/7foto.jpg');">
-            <div class="hero-caption">
-                <h1>Новая коллекция</h1> 
-            </div>
-        </section>
+</div>
 <!-- --------------------------------------FOOTER----------------------------------->
 <?php include 'includes/footer.php'; ?>
 
-    <script src="js/main.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.querySelector('.apple-container');
+    const track = document.querySelector('.apple-track');
+    const dots = document.querySelectorAll('.apple-dot');
+
+    if (!container || !track) return;
+
+    let parent = container.parentElement;
+    while (parent && parent !== document.documentElement) {
+        const style = window.getComputedStyle(parent);
+        if (style.overflow !== 'visible' || style.overflowY !== 'visible' || style.overflowX !== 'visible') {
+            parent.style.setProperty('overflow', 'visible', 'important');
+            parent.style.setProperty('overflow-x', 'visible', 'important');
+            parent.style.setProperty('overflow-y', 'visible', 'important');
+        }
+        parent = parent.parentElement;
+    }
+
+    function updateSlider() {
+        const rect = container.getBoundingClientRect();
+        const viewHeight = window.innerHeight;
+        
+        const scrolled = -rect.top;
+        const totalScrollable = rect.height - viewHeight;
+
+        if (totalScrollable <= 0) return;
+
+        let progress = scrolled / totalScrollable;
+
+        if (progress < 0) progress = 0;
+        if (progress > 1) progress = 1;
+
+        const maxTranslate = -200; 
+        const currentTranslate = progress * maxTranslate;
+        track.style.transform = `translateX(${currentTranslate}vw)`;
+
+        let activeIndex = 0;
+        if (progress >= 0.33 && progress < 0.66) {
+            activeIndex = 1;
+        } else if (progress >= 0.66) {
+            activeIndex = 2;
+        }
+
+        dots.forEach((dot, idx) => {
+            if (idx === activeIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        window.requestAnimationFrame(updateSlider);
+    }, { passive: true });
+
+    updateSlider();
+});
+</script>
+
 </body>
 </html>

@@ -2,15 +2,12 @@
 session_start();
 require_once 'includes/db.php';
 
-// Проверка: пускаем только админа
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     die("Доступ запрещен. Вы не админ.");
 }
 
-// Получаем категории
 $categories = $conn->query("SELECT * FROM categories");
 
-// Язык здесь берем из db.php через $current_lang
 ?>
 <!DOCTYPE html>
 <html lang="<?= $current_lang ?>">
@@ -37,7 +34,6 @@ $categories = $conn->query("SELECT * FROM categories");
     <h1><?= __('admin_add_product') ?></h1>
     <form action="auth/add_product.php" method="POST" enctype="multipart/form-data" class="admin-form">
         
-        <!-- Выбор категории -->
         <select name="category_id">
             <?php while($cat = $categories->fetch_assoc()): ?>
                 <option value="<?= $cat['id'] ?>"><?= translate_db($cat, 'name') ?></option>

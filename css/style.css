@@ -437,7 +437,10 @@ body {
     justify-content: center;
     border: none;
 }
-
+.add-btn { 
+            width: 100%; padding: 20px; background: #000; color: #fff; border: none; 
+            cursor: pointer; letter-spacing: 2px; font-size: 11px; margin-top: auto;
+        }
 .product-card .actions-overlay button img {
     filter: brightness(0); /* Делает иконки черными */
 }

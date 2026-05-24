@@ -10,11 +10,10 @@ if (empty($query)) {
     exit;
 }
 
-// Ищем товары и по русскому, и по английскому названию
-// Добавили name_en в SELECT, чтобы JS мог его отобразить
+
 $sql = "SELECT id, name, name_en, price, main_image 
         FROM products 
-        WHERE name LIKE '%$query%' OR name_en LIKE '%$query%' 
+        WHERE (name LIKE '%$query%' OR name_en LIKE '%$query%') AND is_deleted LIKE '0'
         LIMIT 10";
 
 $result = $conn->query($sql);

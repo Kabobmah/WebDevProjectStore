@@ -2,7 +2,6 @@
 session_start(); 
 require_once 'includes/db.php';
 
-// Проверка авторизации для JS
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user';
 
@@ -26,7 +25,6 @@ if (isset($_SESSION['user_id'])) {
 
 
 
-// checking lang
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
     $_SESSION['lang'] = $lang;

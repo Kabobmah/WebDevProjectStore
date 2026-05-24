@@ -2,7 +2,6 @@
 session_start();
 require_once 'includes/db.php';
 
-// Проверка авторизации
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
@@ -10,20 +9,16 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// 1. Получаем данные пользователя
 $user_query = $conn->query("SELECT full_name, email FROM users WHERE id = $user_id");
 $user = $user_query->fetch_assoc();
 
-// 2. Получаем заказы пользователя
 $orders_query = $conn->query("SELECT * FROM orders WHERE user_id = $user_id ORDER BY order_date DESC");
 
-// Проверяем, сменил ли пользователь язык
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
     $_SESSION['lang'] = $lang;
 }
 
-// По умолчанию ставим русский
 $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 
 ?>
@@ -83,7 +78,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                         <div style="margin-bottom: 15px;">
                             <?php
                             $order_id = $order['id'];
-                            // Добавили p.name_en в запрос для корректного перевода товаров в истории
                             $items_query = $conn->query("
                                 SELECT oi.quantity, p.name, p.name_en, p.price 
                                 FROM order_items oi 
@@ -106,7 +100,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                         </div>
                         <div style="font-size: 11px; margin-top: 5px;" class="status-<?php echo $order['status']; ?>">
                             <?= __('order_status') ?>: <?php 
-                                // Перевод статусов (если они фиксированные, можно через __())
                                 echo strtoupper($order['status']); 
                             ?>
                         </div>

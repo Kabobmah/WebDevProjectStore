@@ -2,7 +2,6 @@
 session_start(); 
 require_once 'includes/db.php'; 
 
-// Проверка авторизации для JS
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user';
 
@@ -14,7 +13,6 @@ if (isset($_SESSION['user_id'])) {
     $uid = (int)$_SESSION['user_id'];
     $fav_query = $conn->query("SELECT product_id FROM favorites WHERE user_id = $uid");
     
-    // Проверяем, что запрос прошел успешно и вернул данные
     if ($fav_query && $fav_query->num_rows > 0) {
         while ($f = $fav_query->fetch_assoc()) {
             $user_favs[] = $f['product_id'];
@@ -30,13 +28,29 @@ $sql = "SELECT p.*, c.name as cat_name FROM products p
         ORDER BY p.id DESC";
 $result = $conn->query($sql);
 
-// Проверяем, сменил ли пользователь язык
+$sort = $_GET['sort'] ?? 'newest';
+$order_sql = "p.id DESC"; // По умолчанию
+
+switch ($sort) {
+    case 'price_asc': $order_sql = "p.price ASC"; break;
+    case 'price_desc': $order_sql = "p.price DESC"; break;
+    case 'alpha': $order_sql = "p.name ASC"; break;
+    default: $order_sql = "p.id DESC";
+}
+
+// Обновите SQL-запрос, добавив $order_sql
+$sql = "SELECT p.*, c.name as cat_name FROM products p 
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.is_deleted = 0 
+        ORDER BY $order_sql";
+$result = $conn->query($sql);
+
+
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
     $_SESSION['lang'] = $lang;
 }
 
-// По умолчанию ставим русский
 $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 ?>
 
@@ -78,8 +92,23 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 <!-- --------------------------------------MAIN----------------------------------->
 <main class="catalog-container" style="padding-top: 140px;">
     <div style="text-align:center; margin-bottom: 40px;">
-        <!-- Перевод заголовка КАТАЛОГ -->
         <h1 style="font-size: 20px; font-weight: normal; letter-spacing: 2px;"><?php echo mb_strtoupper(__('nav_catalog')); ?></h1>
+    </div>
+    <div class="filter-container" style="max-width: 1200px; margin: 120px auto 20px auto; padding: 0 40px; display: flex; justify-content: flex-end;">
+    <select onchange="location.href='?sort=' + this.value" style="padding: 10px; border: 1px solid #eee; font-family: inherit; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; outline: none;">
+        <option value="newest" <?php echo $sort == 'newest' ? 'selected' : ''; ?>>
+            <?php echo __('sort_newest'); ?>
+        </option>
+        <option value="price_asc" <?php echo $sort == 'price_asc' ? 'selected' : ''; ?>>
+            <?php echo __('sort_price_asc'); ?>
+        </option>
+        <option value="price_desc" <?php echo $sort == 'price_desc' ? 'selected' : ''; ?>>
+            <?php echo __('sort_price_desc'); ?>
+        </option>
+        <option value="alpha" <?php echo $sort == 'alpha' ? 'selected' : ''; ?>>
+            <?php echo __('sort_alpha'); ?>
+        </option>
+        </select>
     </div>
 
     <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 0 40px;">
@@ -95,7 +124,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                     </div>
                     
                     <div style="text-align:center; padding:15px;">
-                        <!-- Перевод названия товара через translate_db -->
                         <div style="font-size:11px; text-transform:uppercase; margin-bottom:5px;">
                             <?php echo translate_db($row, 'name'); ?>
                         </div>

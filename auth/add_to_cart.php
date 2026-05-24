@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 $p_id = (int)$_POST['product_id'];
 $u_id = $_SESSION['user_id'];
 
-// Простая логика: если есть — прибавляем, если нет — добавляем
 $sql = "INSERT INTO cart (user_id, product_id, quantity) 
         VALUES ($u_id, $p_id, 1) 
         ON DUPLICATE KEY UPDATE quantity = quantity + 1";

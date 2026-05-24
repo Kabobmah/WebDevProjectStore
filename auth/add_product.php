@@ -2,7 +2,6 @@
 session_start();
 require_once '../includes/db.php';
 
-// Проверка на админа
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     die("Доступ запрещен");
 }
@@ -10,17 +9,16 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Чистим данные
     $name = trim($_POST['name']);
-    $name_en = trim($_POST['name_en']); // Забираем EN название
+    $name_en = trim($_POST['name_en']); 
     $price = (float)$_POST['price'];
     $cat_id = (int)$_POST['category_id'];
     $desc = trim($_POST['description']);
-    $desc_en = trim($_POST['description_en']); // Забираем EN описание
+    $desc_en = trim($_POST['description_en']); 
 
     $color = trim($_POST['color']);
     $size = trim($_POST['size']);
     $stock = (int)$_POST['stock'];
 
-    // Работа с изображением
     if (isset($_FILES['main_image']) && $_FILES['main_image']['error'] === UPLOAD_ERR_OK) {
         $extension = pathinfo($_FILES['main_image']['name'], PATHINFO_EXTENSION);
         $image_name = time() . '_' . uniqid() . '.' . $extension;
@@ -46,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->execute()) {
                 $new_product_id = $conn->insert_id;
 
-                // 3. Вставляем данные в таблицу product_variants
                 $stmt_variant = $conn->prepare("INSERT INTO product_variants (product_id, color, size, stock) VALUES (?, ?, ?, ?)");
                 $stmt_variant->bind_param("issi", $new_product_id, $color, $size, $stock);
                                 

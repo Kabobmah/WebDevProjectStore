@@ -2,14 +2,11 @@
 session_start(); 
 require_once 'includes/db.php'; 
 
-// Проверка авторизации для JS
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user';
 
-// 1. Получаем ID категории из URL
 $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
-// Избранное
 $user_favs = [];
 if (isset($_SESSION['user_id'])) {
     $uid = (int)$_SESSION['user_id'];
@@ -22,21 +19,17 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
-// 2. Получаем категорию (используем translate_db для заголовка)
 $cat_name_query = $conn->query("SELECT * FROM categories WHERE id = $category_id");
 $current_category = $cat_name_query->fetch_assoc();
-// Используем функцию из db.php для перевода названия категории
 $page_title_raw = $current_category ? translate_db($current_category, 'name') : __('nav_catalog');
 $page_title = mb_strtoupper($page_title_raw);
 
-// 3. Выбираем товары ТОЛЬКО этой категории
 $sql = "SELECT p.*, c.name as cat_name, c.name_en as cat_name_en FROM products p 
         LEFT JOIN categories c ON p.category_id = c.id
         WHERE p.category_id = $category_id AND p.is_deleted = 0 
         ORDER BY p.id DESC";
 $result = $conn->query($sql);
 
-// $current_lang уже определен в db.php
 ?>
 
 <!DOCTYPE html>
@@ -82,7 +75,6 @@ $result = $conn->query($sql);
                         </div>
                         
                         <div style="text-align:center; padding:15px;">
-                            <!-- Перевод названия товара из БД -->
                             <div style="font-size:11px; text-transform:uppercase; margin-bottom:5px;">
                                 <?= translate_db($row, 'name') ?>
                             </div>

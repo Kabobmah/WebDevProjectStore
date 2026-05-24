@@ -98,7 +98,11 @@
     "footer_support": "Поддержка",
     "tab_auth": "Авторизация",
     "tab_reg": "Регистрация",
-    "confirm_delete_product": "Вы уверены, что хотите удалить этот товар?"
+    "confirm_delete_product": "Вы уверены, что хотите удалить этот товар?",
+    "sort_newest": "Сначала новые",
+    "sort_price_asc": "Цена: по возрастанию",
+    "sort_price_desc": "Цена: по убыванию",
+    "sort_alpha": "По алфавиту (А-Я)"
   },
   "en": {
     "nav_home": "HOME",
@@ -199,6 +203,10 @@
     "footer_support": "Support",
     "tab_auth": "Login",
     "tab_reg": "Registration",
-    "confirm_delete_product": "Are you sure you want to delete this product?"
+    "confirm_delete_product": "Are you sure you want to delete this product?",
+    "sort_newest": "Newest first",
+    "sort_price_asc": "Price: low to high",
+    "sort_price_desc": "Price: high to low",
+    "sort_alpha": "Alphabetical (A-Z)"
   }
 }

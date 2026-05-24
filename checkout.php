@@ -16,8 +16,6 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
-// Получаем товары в корзине для итоговой суммы
-// Добавил p.name_en в запрос для перевода названий товаров в чеке
 $sql = "SELECT p.name, p.name_en, p.price, c.quantity 
         FROM cart c 
         JOIN products p ON c.product_id = p.id 
@@ -31,13 +29,11 @@ while ($row = $result->fetch_assoc()) {
     $total += $row['price'] * $row['quantity'];
 }
 
-// Перевод сообщения о пустой корзине
 if ($total == 0) { 
     echo __('cart_empty_msg'); 
     exit; 
 }
 
-// Проверка языка (твой блок)
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
     $_SESSION['lang'] = $lang;
@@ -72,7 +68,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
     </script>
 </head>
 <body>
-    <!-- Твой хедер теперь должен быть через инклюд, чтобы работал переключатель -->
     <?php include 'includes/header.php'; ?>
 
     <div class="checkout-container">

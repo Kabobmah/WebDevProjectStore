@@ -1,14 +1,12 @@
-<?php #language support
+<?php 
 
 session_start();
 require_once 'includes/db.php'; 
 
-// Проверка авторизации для корректной работы JS
 $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user' ;
 
-// Переменная $current_lang уже определена в db.php, 
-// поэтому здесь мы её просто используем    для тега <html>
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= $current_lang ?>">
@@ -21,7 +19,6 @@ $userRole = $_SESSION['role'] ?? 'user' ;
         const userRole = '<?php echo $userRole; ?>';
     </script>
     <style>
-        /* Твои стили без изменений */
         .about-page { padding-top: 100px; background: #fff; }
         .about-hero { height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; flex-direction: column; border-bottom: 1px solid #eee; }
         .about-hero h1 { font-size: 40px; font-weight: 300; letter-spacing: 15px; text-transform: uppercase; margin-bottom: 20px; }

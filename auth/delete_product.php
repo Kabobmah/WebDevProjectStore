@@ -11,11 +11,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 if (isset($_POST['id'])) {
     $product_id = (int)$_POST['id'];
 
-    // Твой запрос на скрытие
     $sql = "UPDATE products SET is_deleted = 1 WHERE id = $product_id";
 
     if ($conn->query($sql)) {
-        // ОБЯЗАТЕЛЬНО выводим success, чтобы JS его поймал
         echo 'success';
         exit();
     } else {

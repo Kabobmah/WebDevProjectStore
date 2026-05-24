@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../includes/db.php'; // Проверьте путь до db.php
+require_once '../includes/db.php'; 
 
 header('Content-Type: application/json');
 

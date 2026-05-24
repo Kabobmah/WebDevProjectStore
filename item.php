@@ -8,7 +8,6 @@ $user_favs = [];
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
 
-// Запрос (Добавил name_en и description_en для корректного перевода через translate_db)
 $sql = "SELECT p.*, c.name as cat_name, c.name_en as cat_name_en FROM products p 
         LEFT JOIN categories c ON p.category_id = c.id 
         WHERE p.id = $id";
@@ -16,37 +15,13 @@ $sql = "SELECT p.*, c.name as cat_name, c.name_en as cat_name_en FROM products p
 $result = $conn->query($sql);
 $product = $result->fetch_assoc();
 
-// 1. Проверка на существование в принципе
 if (!$product) { 
     die("Товар не найден."); 
 }
 
-// 2. ЖЕСТКАЯ ПРОВЕРКА удаления (приводим к int принудительно)
 $isDeleted = (int)$product['is_deleted'];
-
-if ($isDeleted === 1 && $userRole !== 'admin') {
-    include 'includes/header.php';
-    ?>
-    <div style="text-align: center; padding: 150px 20px; font-family: sans-serif; background: #fff; min-height: 50vh;">
-        <!-- Используем ключи из JSON для сообщения об удалении -->
-        <h1 style="font-weight: 300; letter-spacing: 2px; color: #000;"><?= __('msg_not_available') ?></h1>
-        <p style="color: #888; margin-top: 20px; font-size: 14px;"><?= __('msg_sold_out') ?></p>
-        <a href="index.php" style="display: inline-block; margin-top: 30px; color: #000; text-decoration: underline; font-size: 12px; letter-spacing: 1px;"><?= __('back_to_catalog') ?></a>
-    </div>
-    <?php
-    include 'includes/footer.php';
-    exit; // Важно: полностью прекращаем загрузку остального HTML
-}
-
-// Проверяем, сменил ли пользователь язык (твой блок без изменений)
-if (isset($_GET['lang'])) {
-    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
-    $_SESSION['lang'] = $lang;
-}
-
-// По умолчанию ставим русский
-$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 ?>
+
 <!DOCTYPE html>
 <html lang="<?= $current_lang ?>">
 <head>
@@ -79,6 +54,40 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
     
 </head>
 <body>
+
+
+
+
+
+<?php
+
+
+
+if ($isDeleted === 1 && $userRole !== 'admin') {
+    include 'includes/header.php';
+    ?>
+    <div style="text-align: center; padding: 150px 20px; font-family: sans-serif; background: #fff; min-height: 50vh;">
+        <!-- Используем ключи из JSON для сообщения об удалении -->
+        <h1 style="font-weight: 300; letter-spacing: 2px; color: #000;"><?= __('msg_not_available') ?></h1>
+        <p style="color: #888; margin-top: 20px; font-size: 14px;"><?= __('msg_sold_out') ?></p>
+        <a href="new.php" style="display: inline-block; margin-top: 30px; color: #000; text-decoration: underline; font-size: 12px; letter-spacing: 1px;"><?= __('back_to_catalog') ?></a>
+    </div>
+    <?php
+    include 'includes/footer.php';
+    exit; 
+}
+
+if (isset($_GET['lang'])) {
+    $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
+    $_SESSION['lang'] = $lang;
+}
+
+$current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
+?>
+
+
+
+
 <!-- --------------------------------------HEADER----------------------------------->
 <?php include 'includes/header.php'; ?>
 
@@ -91,7 +100,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
     <div class="product-sidebar">
             <div class="breadcrumb">
                 <a href="index.php"><?= __('nav_home') ?></a> / 
-                <!-- Перевод названия категории через вспомогательный массив в БД -->
                 <?php 
                     $cat_data = ['name' => $product['cat_name'], 'name_en' => $product['cat_name_en']];
                     echo translate_db($cat_data, 'name'); 
@@ -112,7 +120,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
     
                 <?php
                     $isFav = false;
-                // Проверка на вшивость: залогинен ли и есть ли таблица
                 if (isset($_SESSION['user_id'])) {
                     $u_id = (int)$_SESSION['user_id'];
                     $p_id = (int)$product['id'];

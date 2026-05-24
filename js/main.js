@@ -7,7 +7,7 @@ const translations = {
         accs: "Аксессуары",
         emptyCart: "Ваша корзина пуста",
         emptyFav: "Ваш список пуст",
-        loading: "Загрузка...",
+        loading: "Войдите или зарегистрируйтесь для просмотра ",
         account: "Аккаунт",
         admin: "АДМИН-ПАНЕЛЬ",
         profileData: "ДАННЫЕ АККАУНТА",
@@ -37,7 +37,7 @@ const translations = {
         accs: "Accessories",
         emptyCart: "Your cart is empty",
         emptyFav: "Your list is empty",
-        loading: "Loading...",
+        loading: "Login or register to view",
         account: "Account",
         admin: "ADMIN PANEL",
         profileData: "ACCOUNT DATA",
@@ -64,19 +64,16 @@ const translations = {
     }
 };
 
-// ОПРЕДЕЛЕНИЕ ЯЗЫКА
 const curLang = (document.documentElement.lang === 'en' || window.location.search.includes('lang=en')) ? 'en' : 'ru';
 const t = translations[curLang];
 
-// ФУНКЦИЯ ВЫБОРА ИМЕНИ (Основана на твоей БД в image_e20101.png)
 function getProdName(item) {
     if (curLang === 'en' && item.name_en) {
-        return item.name_en; // Берём из колонки name_en
+        return item.name_en; 
     }
-    return item.name; // По умолчанию (RU) берём из name
+    return item.name; 
 }
 
-// 2. ДАННЫЕ МЕГА-МЕНЮ
 const menuData = {
     "clothes": {
         links: [
@@ -140,7 +137,6 @@ if (megaMenu) {
     megaMenu.addEventListener('mouseleave', () => megaMenu.classList.remove('show'));
 }
 
-// 3. ЛОГИКА САЙДБАРА
 function openSidebar(type) {
     const content = document.getElementById('sidebar-content');
     const sidebar = document.getElementById('sidebar-container');
@@ -304,24 +300,79 @@ async function removeFromCart(productId) {
     } catch (e) { console.error(e); }
 }
 
+
+
 async function toggleAction(productId, actionType, btn) {
-    if (typeof userIsLogged === 'undefined' || !userIsLogged) { openSidebar('profile'); return; }
+    if (!userIsLogged) {
+        openSidebar('profile');
+        return;
+    }
+
     const formData = new FormData();
     formData.append('product_id', productId);
     formData.append('action', actionType);
+
     try {
-        const response = await fetch('auth/action_handler.php', { method: 'POST', body: formData });
+        const response = await fetch('auth/action_handler.php', {
+            method: 'POST',
+            body: formData
+        });
         const result = await response.json();
+
         if (result.status === 'success') {
             if (actionType === 'favorite') {
                 const img = btn.querySelector('img');
-                if (result.action === 'added') { img.src = 'src/heart-filled.png'; img.style.filter = 'none'; } 
-                else { img.src = 'src/heart.png'; img.style.filter = 'brightness(0)'; }
+                
+                if (result.action === 'added') {
+                    img.src = 'src/heart-filled.png';
+                    img.style.filter = 'none';
+                } else if (result.action === 'removed') {
+                    img.src = 'src/heart.png';
+                    img.style.filter = 'brightness(0)';
+                }
             }
-            if (actionType === 'cart') alert(t.addedToCart);
+            
+            // ВЕРНО: либо вызываем функцию, либо проверяем тип
+            if (actionType === 'cart') {
+                alert(t.addedToCart);
+            }
         }
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error(t.error, error);
+    }
 }
+
+async function addToCart(productId) {
+    if (!userIsLogged) {
+        alert(t.loginRequired);
+        openSidebar('profile');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('product_id', productId);
+
+    try {
+        const response = await fetch('auth/add_to_cart.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            alert(t.addedToCart);
+        } else {
+            alert(t.error + result.message);
+        }
+    } catch (error) {
+        console.error(t.error, error);
+    }
+}
+
+
+
+
 
 function deleteProduct(productId) {
     if (confirm(t.confirmDelete)) {

@@ -18,7 +18,6 @@ if (!$product_id || !$action) {
     exit;
 }
 
-// 1. УДАЛЕНИЕ ИЗ КОРЗИНЫ (проверяем первым)
 if ($action === 'remove_cart') {
     $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ? LIMIT 1");
     $stmt->bind_param("ii", $user_id, $product_id);
@@ -30,7 +29,6 @@ if ($action === 'remove_cart') {
     exit;
 }
 
-// 2. ИЗБРАННОЕ
 if ($action === 'favorite') {
     $check = $conn->prepare("SELECT id FROM favorites WHERE user_id = ? AND product_id = ?");
     $check->bind_param("ii", $user_id, $product_id);
@@ -50,7 +48,6 @@ if ($action === 'favorite') {
     exit;
 }
 
-// 3. ДОБАВЛЕНИЕ В КОРЗИНУ
 if ($action === 'cart') {
     $ins = $conn->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, 1)");
     $ins->bind_param("ii", $user_id, $product_id);

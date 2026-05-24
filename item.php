@@ -16,10 +16,19 @@ $result = $conn->query($sql);
 $product = $result->fetch_assoc();
 
 if (!$product) { 
-    die("Товар не найден."); 
+    die(<?=__('itemnotfound')?>); 
 }
 
 $isDeleted = (int)$product['is_deleted'];
+
+$reviews_query = $conn->query("
+    SELECT r.*, u.full_name as user_name 
+    FROM reviews r 
+    JOIN users u ON r.user_id = u.id 
+    WHERE r.product_id = $id 
+    ORDER BY r.created_at DESC
+");
+
 ?>
 
 <!DOCTYPE html>

@@ -109,8 +109,8 @@
     "yourReview": "Ваш отзыв о товаре...",
     "authorize": "Авторизуйтесь что б оставить ваше мнение",
     "leaveaReview":"Оставьте отзыв",
+    "itemnotfound":"Товар не найден",
     "Reviews":"Отзывы",
-
     "sort_alpha": "По алфавиту (А-Я)"
   },
   "en": {
@@ -224,6 +224,7 @@
     "authorize": "Authorize to leave your opinion.",
     "leaveaReview":"Leave a review",
     "Reviews":"Reviews",
+    "itemnotfound":"Item not found",
     "sort_alpha": "Alphabetical (A-Z)"
   }
 }

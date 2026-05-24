@@ -278,7 +278,7 @@ async function loadFavorites() {
                     <div class="cart-item" style="display:flex; gap:15px; margin-bottom:15px; align-items:center; border-bottom: 1px solid #eee; padding-bottom:10px;">
                         <img src="src/${item.main_image}" style="width:60px; height:80px; object-fit:cover;">
                         <div>
-                            <div style="font-size:12px; text-transform:uppercase;">${item.name}</div>
+                            <div style="font-size:12px; text-transform:uppercase;">${getProdName(item)}</div>
                             <div style="font-weight:bold;">${Number(item.price).toLocaleString()} ₸</div>
                             <a href="item.php?id=${item.id}" class="view-link" style="font-size:10px; color:gray; text-decoration:underline;">${t.view}</a>
                         </div>
@@ -286,7 +286,7 @@ async function loadFavorites() {
             });
             content.innerHTML = html + '</div>';
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { content.innerHTML = `<div class="sidebar-header-simple">${t.favTitle}</div><p>Error</p>`; }
 }
 
 async function removeFromCart(productId) {

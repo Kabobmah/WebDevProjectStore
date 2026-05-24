@@ -50,6 +50,114 @@ $isDeleted = (int)$product['is_deleted'];
             width: 100%; padding: 20px; background: #000; color: #fff; border: none; 
             cursor: pointer; letter-spacing: 2px; font-size: 11px; margin-top: auto;
         }
+
+        .sidebar-reviews-block {
+            margin-top: 60px;
+            border-top: 1px solid #000;
+            padding-top: 30px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        .sidebar-reviews-block h2 {
+            font-size: 14px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .review-card {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .review-author {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .review-date {
+            font-size: 10px;
+            color: #999;
+        }
+        .review-rating {
+            color: #000;
+            font-size: 11px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .review-comment {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #444;
+        }
+        .review-form-container {
+            background: #fafafa;
+            padding: 25px;
+            border: 1px solid #eee;
+        }
+        .review-form-container h3 {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .review-form select, .review-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eee;
+            background: #fff;
+            font-family: inherit;
+            font-size: 12px;
+            outline: none;
+        }
+        .review-form select:focus, .review-form textarea:focus {
+            border-color: #000;
+        }
+        .review-submit-btn {
+            background: #000;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 10px;
+            transition: opacity 0.3s;
+        }
+        .review-submit-btn:hover { opacity: 0.8; }
+        .review-status-msg {
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .status-success { background: #e6f4ea; color: #137333; }
+        .status-error { background: #fce8e6; color: #c5221f; }
+        .no-reviews { color: #888; font-size: 12px; font-style: italic; }
+
+        @media (max-width: 768px) {
+            .product-page-layout { flex-direction: column; }
+            .product-visual { position: relative; }
+            .product-sidebar { padding: 40px 20px; }
+        }
     </style>
     
 </head>
@@ -135,6 +243,66 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                     <img src="src/<?php echo $isFav ? 'heart-filled.png' : 'heart.png'; ?>" alt="fav" style="width: 45px; height: px; <?php echo $isFav ? '' : 'filter: brightness(0);'; ?>">
                 </button>
             </div>
+            <div class="sidebar-reviews-block">
+            <h2><?=__('Reviews')?></h2>
+
+            <?php if(isset($_GET['review'])): ?>
+                <?php if($_GET['review'] === 'success'): ?>
+                    <div class="review-status-msg status-success"><?=__(newReview)?></div>
+                <?php elseif($_GET['review'] === 'empty'): ?>
+                    <div class="review-status-msg status-error"><?=__('enterReview')?></div>
+                <?php else: ?>
+                    <div class="review-status-msg status-error"><?=__('errorReview')?></div>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <div class="reviews-list">
+                <?php if ($reviews_query && $reviews_query->num_rows > 0): ?>
+                    <?php while($review = $reviews_query->fetch_assoc()): ?>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-author"><?php echo htmlspecialchars($review['user_name'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="review-date"><?php echo date('d.m.Y', strtotime($review['created_at'])); ?></span>
+                            </div>
+                            <div class="review-rating">
+                                <?php echo str_repeat('★', $review['rating']) . str_repeat('☆', 5 - $review['rating']); ?>
+                            </div>
+                            <div class="review-comment">
+                                <?php echo nl2br(htmlspecialchars($review['comment'], ENT_QUOTES, 'UTF-8')); ?>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p class="no-reviews"><?=__('noReviews')?></p>
+                <?php endif; ?>
+            </div>
+
+            <div class="review-form-container">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <h3><?=__('leaveaReview')?></h3>
+                    <form action="auth/add_review.php" method="POST" class="review-form">
+                        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                        
+                        <div>
+                            <select name="rating" required>
+                                <option value="5">5 ★★★★★ </option>
+                                <option value="4">4 ★★★★☆ </option>
+                                <option value="3">3 ★★★☆☆ </option>
+                                <option value="2">2 ★★☆☆☆ </option>
+                                <option value="1">1 ★☆☆☆☆ </option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <textarea name="comment" rows="4" placeholder="<?= __('yourReview')?>" required></textarea>
+                        </div>
+
+                        <button type="submit" class="review-submit-btn"><?= __('sent')?></button>
+                    </form>
+                <?php else: ?>
+                    <h3><?=__('leaveaReview')?></h3>
+                    <p style="font-size: 12px; color: #777; line-height: 1.5;"><?= __('authorize')?></p>
+                <?php endif; ?>
     </div>
 </div>
 <!-- --------------------------------------FOOTER----------------------------------->

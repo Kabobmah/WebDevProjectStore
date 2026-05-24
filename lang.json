@@ -102,6 +102,15 @@
     "sort_newest": "Сначала новые",
     "sort_price_asc": "Цена: по возрастанию",
     "sort_price_desc": "Цена: по убыванию",
+    "noReviews": "У этого товара пока нет отзывов",
+    "newReview" : "Отзыв успешно добавлен.",
+    "enterReview" : "Напишите текст отзыва.",
+    "sent":  "Отправлено.",
+    "yourReview": "Ваш отзыв о товаре...",
+    "authorize": "Авторизуйтесь что б оставить ваше мнение",
+    "leaveaReview":"Оставьте отзыв",
+    "Reviews":"Отзывы",
+
     "sort_alpha": "По алфавиту (А-Я)"
   },
   "en": {
@@ -207,6 +216,14 @@
     "sort_newest": "Newest first",
     "sort_price_asc": "Price: low to high",
     "sort_price_desc": "Price: high to low",
+    "noReviews": "This item has no reviews yet",
+    "newReview" : "Review added successfully",
+    "enterReview" : "Enter review",
+    "sent":  "Sent.",
+    "yourReview": "Your item review...",
+    "authorize": "Authorize to leave your opinion.",
+    "leaveaReview":"Leave a review",
+    "Reviews":"Reviews",
     "sort_alpha": "Alphabetical (A-Z)"
   }
 }

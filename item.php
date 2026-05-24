@@ -18,7 +18,13 @@ $product = $result->fetch_assoc();
 if (!$product) { 
     die("Товар не найден."); 
 }
-
+$reviews_query = $conn->query("
+    SELECT r.*, u.full_name as user_name 
+    FROM reviews r 
+    JOIN users u ON r.user_id = u.id 
+    WHERE r.product_id = $id 
+    ORDER BY r.created_at DESC
+");
 $isDeleted = (int)$product['is_deleted'];
 ?>
 
@@ -39,7 +45,9 @@ $isDeleted = (int)$product['is_deleted'];
         .product-visual img { width: 100%; height: auto; display: block; }
         .product-sidebar { 
             flex: 0.8; padding: 100px 60px; 
-            position: sticky; top: 0; height: 100vh; box-sizing: border-box; 
+            box-sizing: border-box; 
+            display: flex; flex-direction: column;
+            background: #fff;
         }
         .breadcrumb { font-size: 10px; letter-spacing: 1px; color: #999; text-transform: uppercase; margin-bottom: 20px; }
         .breadcrumb a { color: #999; text-decoration: none; }

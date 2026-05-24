@@ -280,10 +280,13 @@ async function loadFavorites() {
                 html += `
                     <div class="cart-item" style="display:flex; gap:15px; margin-bottom:15px; align-items:center; border-bottom: 1px solid #eee; padding-bottom:10px;">
                         <img src="src/${item.main_image}" style="width:60px; height:80px; object-fit:cover;">
-                        <div>
+                        <div style="flex:1;">
                             <div style="font-size:12px; text-transform:uppercase;">${getProdName(item)}</div>
                             <div style="font-weight:bold;">${Number(item.price).toLocaleString()} ₸</div>
-                            <a href="item.php?id=${item.id}" class="view-link" style="font-size:10px; color:gray; text-decoration:underline;">${t.view}</a>
+                            <div style="display:flex; gap:10px; margin-top:5px; align-items:center;">
+                                <a href="item.php?id=${item.id}" class="view-link" style="font-size:10px; color:gray; text-decoration:underline;">${t.view}</a>
+                                <button onclick="removeFromFavorites(${item.id})" style="background:none; border:none; color:red; cursor:pointer; font-size:10px; padding:0; text-decoration:underline;">${t.delete}</button>
+                            </div>
                         </div>
                     </div>`;
             });
@@ -292,6 +295,30 @@ async function loadFavorites() {
     } catch (e) { 
         content.innerHTML = `<div class="sidebar-header-simple">${t.favTitle}</div><p>Error</p>`; 
     }
+}
+
+async function removeFromFavorites(productId) {
+    const formData = new FormData();
+    formData.append('product_id', productId);
+    formData.append('action', 'favorite'); 
+
+    try {
+        const response = await fetch('auth/action_handler.php', { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.status === 'success') {
+          
+            loadFavorites();
+            
+            const heartBtn = document.querySelector(`[onclick*="toggleAction(${productId}, 'favorite'"]`);
+            if (heartBtn) {
+                const img = heartBtn.querySelector('img');
+                if (img) {
+                    img.src = 'src/heart.png';
+                    img.style.filter = 'brightness(0)';
+                }
+            }
+        }
+    } catch (e) { console.error(e); }
 }
 
 async function removeFromCart(productId) {

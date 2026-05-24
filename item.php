@@ -16,7 +16,7 @@ $result = $conn->query($sql);
 $product = $result->fetch_assoc();
 
 if (!$product) { 
-    die(<?=__('itemnotfound')?>); 
+    die(__('itemnotfound')); 
 }
 
 $isDeleted = (int)$product['is_deleted'];
@@ -257,7 +257,7 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 
             <?php if(isset($_GET['review'])): ?>
                 <?php if($_GET['review'] === 'success'): ?>
-                    <div class="review-status-msg status-success"><?=__(newReview)?></div>
+                    <div class="review-status-msg status-success"><?=__('newReview')?></div>
                 <?php elseif($_GET['review'] === 'empty'): ?>
                     <div class="review-status-msg status-error"><?=__('enterReview')?></div>
                 <?php else: ?>

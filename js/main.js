@@ -22,7 +22,7 @@ const translations = {
         total: "ИТОГО",
         checkout: "ОФОРМИТЬ ЗАКАЗ",
         delete: "УДАЛИТЬ",
-        view: "View",
+        view: "Смотреть",
         addedToCart: "Товар добавлен в корзину!",
         confirmDelete: "Вы уверены, что хотите удалить этот товар?",
         loginRequired: "Войдите в аккаунт, чтобы добавить товар в корзину",
@@ -30,7 +30,7 @@ const translations = {
         password: "Пароль",
         fio: "ФИО",
         cartTitle: "КОРЗИНА",
-        favTitle: "FAVORITES"
+        favTitle: "ИЗБРАННОЕ"
     },
     en: {
         clothes: "Clothes",

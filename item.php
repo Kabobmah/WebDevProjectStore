@@ -256,7 +256,7 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 
             <?php if(isset($_GET['review'])): ?>
                 <?php if($_GET['review'] === 'success'): ?>
-                    <div class="review-status-msg status-success"><?=__(newReview)?></div>
+                    <div class="review-status-msg status-success"><?=__('newReview')?></div>
                 <?php elseif($_GET['review'] === 'empty'): ?>
                     <div class="review-status-msg status-error"><?=__('enterReview')?></div>
                 <?php else: ?>
@@ -312,11 +312,13 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                     <p style="font-size: 12px; color: #777; line-height: 1.5;"><?= __('authorize')?></p>
                 <?php endif; ?>
     </div>
+    </div>
+</div>
 </div>
 <!-- --------------------------------------FOOTER----------------------------------->
 <?php include 'includes/footer.php'; ?>
 
-    <script src="js/main.js"></script>
+<script src="js/main.js"></script>
 
 </body>
 </html>

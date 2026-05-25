@@ -16,7 +16,7 @@ $result = $conn->query($sql);
 $product = $result->fetch_assoc();
 
 if (!$product) { 
-    die(__('itemnotfound')); 
+    die("Товар не найден."); 
 }
 $reviews_query = $conn->query("
     SELECT r.*, u.full_name as user_name 
@@ -26,15 +26,6 @@ $reviews_query = $conn->query("
     ORDER BY r.created_at DESC
 ");
 $isDeleted = (int)$product['is_deleted'];
-
-$reviews_query = $conn->query("
-    SELECT r.*, u.full_name as user_name 
-    FROM reviews r 
-    JOIN users u ON r.user_id = u.id 
-    WHERE r.product_id = $id 
-    ORDER BY r.created_at DESC
-");
-
 ?>
 
 <!DOCTYPE html>
@@ -265,7 +256,7 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 
             <?php if(isset($_GET['review'])): ?>
                 <?php if($_GET['review'] === 'success'): ?>
-                    <div class="review-status-msg status-success"><?=__('newReview')?></div>
+                    <div class="review-status-msg status-success"><?=__(newReview)?></div>
                 <?php elseif($_GET['review'] === 'empty'): ?>
                     <div class="review-status-msg status-error"><?=__('enterReview')?></div>
                 <?php else: ?>

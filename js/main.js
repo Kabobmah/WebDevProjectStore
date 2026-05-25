@@ -271,11 +271,7 @@ async function loadFavorites() {
         const data = await response.json();
 
         if (data.status === 'success') {
-<<<<<<< HEAD
-            if (data.items.length === 0) {
-=======
             if (!data.items || data.items.length === 0) {
->>>>>>> 51cee659f40054ed2ec7d85135da49fb6d5fe41e
                 content.innerHTML = `<div class="sidebar-header-simple" style="font-weight:bold; margin-bottom:20px;">${t.favTitle}</div><p style="padding:20px;">${t.emptyFav}</p>`;
                 return;
             }
@@ -284,13 +280,8 @@ async function loadFavorites() {
                 html += `
                     <div class="cart-item" style="display:flex; gap:15px; margin-bottom:15px; align-items:center; border-bottom: 1px solid #eee; padding-bottom:10px;">
                         <img src="src/${item.main_image}" style="width:60px; height:80px; object-fit:cover;">
-<<<<<<< HEAD
-                        <div>
-                            <div style="font-size:12px; text-transform:uppercase;">${item.name}</div>
-=======
                         <div style="flex:1;">
                             <div style="font-size:12px; text-transform:uppercase;">${getProdName(item)}</div>
->>>>>>> 51cee659f40054ed2ec7d85135da49fb6d5fe41e
                             <div style="font-weight:bold;">${Number(item.price).toLocaleString()} ₸</div>
                             <div style="display:flex; gap:10px; margin-top:5px; align-items:center;">
                                 <a href="item.php?id=${item.id}" class="view-link" style="font-size:10px; color:gray; text-decoration:underline;">${t.view}</a>
@@ -301,10 +292,6 @@ async function loadFavorites() {
             });
             content.innerHTML = html + '</div>';
         }
-<<<<<<< HEAD
-    } catch (e) { content.innerHTML = `<div class="sidebar-header-simple">${t.favTitle}</div><p>Error</p>`; }
-
-=======
     } catch (e) { 
         content.innerHTML = `<div class="sidebar-header-simple">${t.favTitle}</div><p>Error</p>`; 
     }
@@ -332,7 +319,6 @@ async function removeFromFavorites(productId) {
             }
         }
     } catch (e) { console.error(e); }
->>>>>>> 51cee659f40054ed2ec7d85135da49fb6d5fe41e
 }
 
 async function removeFromCart(productId) {

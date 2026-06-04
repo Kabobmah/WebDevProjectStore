@@ -1,6 +1,4 @@
-// Я лох
 
-// 1. СЛОВАРЬ ПЕРЕВОДОВ
 const translations = {
     ru: {
         clothes: "Одежда",

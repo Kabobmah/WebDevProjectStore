@@ -8,7 +8,7 @@
 <html lang="<?= $current_lang ?>">
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         .lang-switcher { display: flex; gap: 10px; margin-right: 15px; align-items: center; }
         .lang-switcher a { text-decoration: none; color: #000; font-size: 14px; opacity: 0.6; }
@@ -16,8 +16,7 @@
     </style>
     <script>
         const currentLang = '<?= $_SESSION['lang'] ?? 'ru' ?>';
-        const translations = <?= file_get_contents("auth/lang.json") ?>;
-
+        const translations = <?= file_get_contents('/lang.json') ?>;
         function _t(key) {
             return translations[currentLang][key] || key;
         }

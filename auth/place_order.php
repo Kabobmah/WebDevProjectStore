@@ -2,6 +2,29 @@
 session_start();
 require_once '../includes/db.php';
 
+
+$current_lang = $_SESSION['lang'] ?? 'ru';
+
+$lang_dict = [
+    'ru' => [
+        'msg_success' => 'Заказ успешно оформлен!',
+        'err_empty'   => 'Корзина пуста',
+        'err_variant' => 'Ошибка: У товара ID %d нет ни одного варианта в таблице product_variants!',
+        'err_create'  => 'Ошибка при создании заказа: '
+    ],
+    'en' => [
+        'msg_success' => 'Order successfully placed!',
+        'err_empty'   => 'Cart is empty',
+        'err_variant' => 'Error: Product ID %d has no variants in product_variants table!',
+        'err_create'  => 'Error creating order: '
+    ]
+];
+
+function get_inline_txt($key, $lang, $dict) {
+    return $dict[$lang][$key] ?? $dict['ru'][$key] ?? $key;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
     $user_id = (int)$_SESSION['user_id'];
     $address = $conn->real_escape_string($_POST['address']);
@@ -22,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
     }
 
     if (count($items) === 0) {
-        die("Корзина пуста");
+        die(get_inline_txt('err_empty', $current_lang, $lang_dict));
     }
 
     $sql_order = "INSERT INTO orders (user_id, order_date, total_amount, status) 
@@ -44,17 +67,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
                              VALUES ($order_id, $v_id, $qty)";
                 $conn->query($sql_item);
             } else {
-                die("Ошибка: У товара ID $p_id нет ни одного варианта в таблице product_variants!");
+                $err_msg = sprintf(get_inline_txt('err_variant', $current_lang, $lang_dict), $p_id);
+                die($err_msg);
             }
         }
 
         $conn->query("DELETE FROM cart WHERE user_id = $user_id");
 
+        $alert_text = get_inline_txt('msg_success', $current_lang, $lang_dict) . " #" . $order_id;
+
         echo "<script>
-                alert('Заказ #$order_id успешно оформлен!');
+                alert('" . addslashes($alert_text) . "');
                 window.location.href = '../index.php';
               </script>";
     } else {
-        echo "Ошибка при создании заказа: " . $conn->error;
+        echo get_inline_txt('err_create', $current_lang, $lang_dict) . $conn->error;
     }
 }

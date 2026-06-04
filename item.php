@@ -16,7 +16,7 @@ $result = $conn->query($sql);
 $product = $result->fetch_assoc();
 
 if (!$product) { 
-    die("Товар не найден."); 
+    die("Item not found"); 
 }
 $reviews_query = $conn->query("
     SELECT r.*, u.full_name as user_name 
@@ -183,7 +183,6 @@ if ($isDeleted === 1 && $userRole !== 'admin') {
     include 'includes/header.php';
     ?>
     <div style="text-align: center; padding: 150px 20px; font-family: sans-serif; background: #fff; min-height: 50vh;">
-        <!-- Используем ключи из JSON для сообщения об удалении -->
         <h1 style="font-weight: 300; letter-spacing: 2px; color: #000;"><?= __('msg_not_available') ?></h1>
         <p style="color: #888; margin-top: 20px; font-size: 14px;"><?= __('msg_sold_out') ?></p>
         <a href="new.php" style="display: inline-block; margin-top: 30px; color: #000; text-decoration: underline; font-size: 12px; letter-spacing: 1px;"><?= __('back_to_catalog') ?></a>

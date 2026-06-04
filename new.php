@@ -6,7 +6,6 @@ $userIsLogged = isset($_SESSION['user_id']) ? 'true' : 'false';
 $userRole = $_SESSION['role'] ?? 'user';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 1;
-//-----------------------------------------------------------------
 
 $user_favs = [];
 if (isset($_SESSION['user_id'])) {
@@ -20,16 +19,8 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
-//-----------------------------------------------------------------
-// Добавлена выборка name_en для корректного перевода товаров
-$sql = "SELECT p.*, c.name as cat_name FROM products p 
-        LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.is_deleted = 0 
-        ORDER BY p.id DESC";
-$result = $conn->query($sql);
-
 $sort = $_GET['sort'] ?? 'newest';
-$order_sql = "p.id DESC"; // По умолчанию
+$order_sql = "p.id DESC"; 
 
 switch ($sort) {
     case 'price_asc': $order_sql = "p.price ASC"; break;
@@ -38,13 +29,16 @@ switch ($sort) {
     default: $order_sql = "p.id DESC";
 }
 
-// Обновите SQL-запрос, добавив $order_sql
-$sql = "SELECT p.*, c.name as cat_name FROM products p 
+$sql = "SELECT p.*, c.name as cat_name,
+               AVG(r.rating) as avg_rating,
+               COUNT(r.id) as reviews_count
+        FROM products p 
         LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN reviews r ON p.id = r.product_id
         WHERE p.is_deleted = 0 
+        GROUP BY p.id
         ORDER BY $order_sql";
 $result = $conn->query($sql);
-
 
 if (isset($_GET['lang'])) {
     $lang = $_GET['lang'] == 'en' ? 'en' : 'ru';
@@ -86,10 +80,8 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
 </head>
 
 <body style="background: #fff;">
-<!-- --------------------------------------HEADER----------------------------------->
 <?php include 'includes/header.php'; ?>
 
-<!-- --------------------------------------MAIN----------------------------------->
 <main class="catalog-container" style="padding-top: 140px;">
     <div style="text-align:center; margin-bottom: 40px;">
         <h1 style="font-size: 20px; font-weight: normal; letter-spacing: 2px;"><?php echo mb_strtoupper(__('nav_catalog')); ?></h1>
@@ -131,16 +123,30 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                     </div>
                 </a>
 
-                <div class="product-actions" style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 10px;">
-                    <button class="icon-btn action-trigger" onclick="toggleAction(<?php echo $row['id']; ?>, 'favorite', this)" style=" color:'black'; background: rgba(100,100,100 ,0.8); border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+                <div class="product-actions" style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+                    
+                    <?php $rating = round($row['avg_rating'] ?? 0); ?>
+                    <div class="product-rating" style="background: rgba(255, 255, 255, 0.9); padding: 4px 8px; border-radius: 12px; font-size: 11px; letter-spacing: 0.5px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); white-space: nowrap;">
+                        <span class="stars-filled" style="color: #000; font-size: 10px;"><?php echo str_repeat('★', $rating); ?></span><span class="stars-empty" style="color: #ccc; font-size: 10px;"><?php echo str_repeat('★', 5 - $rating); ?></span>
+                        
+                        <?php if (isset($row['reviews_count']) && $row['reviews_count'] > 0): ?>
+                            <span class="reviews-num" style="font-size: 9px; color: #666; margin-left: 4px; font-family: sans-serif; font-weight: bold;">
+                                (<?php echo $row['reviews_count']; ?>)
+                            </span>
+                        <?php endif; ?>
+                    </div>
+
+                    <button class="icon-btn action-trigger" onclick="toggleAction(<?php echo $row['id']; ?>, 'favorite', this)" style="color:'black'; background: rgba(100,100,100 ,0.8); border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
                         <img src="src/<?php echo $img_src; ?>" alt="heart" class="heart-icon" style="width: 20px; height: 20px; <?php echo $is_fav ? '' : 'filter: brightness(0);'; ?>">
                     </button>
+                    
                     <?php if ($userRole === 'admin'): ?>
                         <button onclick="deleteProduct(<?php echo $row['id']; ?>)" style="background: rgba(255, 0, 0, 0.7); border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; color: #fff; font-size: 18px; font-weight: bold;">
                                 &times;
                         </button>
                     <?php endif; ?>
-                    <button class="icon-btn action-trigger" onclick="toggleAction(<?php echo $row['id']; ?>, 'cart',this)" style=" color:'black'; background: rgba(100,100,100 ,0.8); border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+                    
+                    <button class="icon-btn action-trigger" onclick="toggleAction(<?php echo $row['id']; ?>, 'cart',this)" style="color:'black'; background: rgba(100,100,100 ,0.8); border-radius: 50%; padding: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
                         <img src="src/basket.png" alt="basket" style="width: 20px; height: 20px;">
                     </button>
                 </div>
@@ -148,10 +154,9 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
         <?php endwhile; ?>
     </div>
 </main>
-<!-- --------------------------------------FOOTER----------------------------------->
 
 <?php include 'includes/footer.php'; ?>
 
-    <script src="js/main.js"></script>
+<script src="js/main.js"></script>
 </body> 
 </html>

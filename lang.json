@@ -111,7 +111,25 @@
     "leaveaReview":"Оставьте отзыв",
     "itemnotfound":"Товар не найден",
     "Reviews":"Отзывы",
-    "sort_alpha": "По алфавиту (А-Я)"
+    "sort_alpha": "По алфавиту (А-Я)",
+    "admin_tab_products": "Управление товарами",
+    "admin_tab_orders": "Заказы клиентов",
+    "admin_orders_title": "Все заказы клиентов",
+    "th_order_id": "ID Заказа",
+    "th_customer": "Покупатель",
+    "th_date": "Дата",
+    "th_total": "Сумма",
+    "th_status": "Статус",
+    "lbl_more_details": "подробнее",
+    "lbl_order_content": "Содержимое заказа",
+    "lbl_no_details": "Детали заказа отсутствуют или товар был удален",
+    "lbl_no_orders_yet": "В магазине пока нет ни одного заказа.",
+    "lbl_pieces_short": "шт.",
+    "status_pending": "В обработке",
+    "status_completed": "Выполнен",
+    "status_canceled": "Отменен",
+    "msg_order_success": "Заказ принят! Спасибо за покупку.",
+    "msg_order_success_desc": "Наш менеджер свяжется с вами в ближайшее время для подтверждения."
   },
   "en": {
     "nav_home": "HOME",
@@ -225,6 +243,26 @@
     "leaveaReview":"Leave a review",
     "Reviews":"Reviews",
     "itemnotfound":"Item not found",
-    "sort_alpha": "Alphabetical (A-Z)"
+    "sort_alpha": "Alphabetical (A-Z)",
+    "admin_tab_products": "Manage Products",
+    "admin_tab_orders": "Customer Orders",
+    "admin_orders_title": "All Customer Orders",
+    "th_order_id": "Order ID",
+    "th_customer": "Customer",
+    "th_date": "Date",
+    "th_total": "Total Amount",
+    "th_status": "Status",
+    "lbl_more_details": "details",
+    "lbl_order_content": "Order Content",
+    "lbl_no_details": "Order details are missing or product was deleted",
+    "lbl_no_orders_yet": "There are no orders in the shop yet.",
+    "lbl_pieces_short": "pcs",
+    "status_pending": "Pending",
+    "status_completed": "Completed",
+    "status_canceled": "Canceled",
+    "msg_order_success": "Order accepted! Thank you for your purchase.",
+    "msg_order_success_desc": "Our manager will contact you shortly to confirm your order."
+
+
   }
 }

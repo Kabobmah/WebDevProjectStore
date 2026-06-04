@@ -17,7 +17,6 @@ if (!$product_id) {
     exit;
 }
 
-// Удаляем товар
 $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
 $stmt->bind_param("ii", $user_id, $product_id);
 

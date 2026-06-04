@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $result->fetch_assoc();
 
     if ($user && password_verify($password, $user['password'])) {
-        // Регенерируем ID сессии (защита от фиксации сессии, хороший тон)
         session_regenerate_id(true);
 
         $_SESSION['user_id'] = $user['id'];

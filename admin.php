@@ -8,13 +8,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $categories = $conn->query("SELECT * FROM categories");
 
-// Определяем текущую активную вкладку (по умолчанию 'products')
 $tab = $_GET['tab'] ?? 'products';
 
-// Запрос на получение всех заказов всех пользователей
 $orders_query = null;
 if ($tab === 'orders') {
-    // Вытаскиваем имя товара на нужном языке динамически в зависимости от $current_lang
     $name_field = ($current_lang === 'en') ? 'IFNULL(p.name_en, p.name)' : 'p.name';
 
     $orders_query = $conn->query("

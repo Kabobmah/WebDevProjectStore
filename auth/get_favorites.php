@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// ДОБАВЛЕНО p.name_en В ВЫБОРКУ ИЗ БАЗЫ
 $sql = "SELECT p.id, p.name, p.name_en, p.price, p.main_image 
         FROM favorites f 
         JOIN products p ON f.product_id = p.id 

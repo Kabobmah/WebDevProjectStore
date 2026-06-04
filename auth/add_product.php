@@ -7,7 +7,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Чистим данные
     $name = trim($_POST['name']);
     $name_en = trim($_POST['name_en']); 
     $price = (float)$_POST['price'];
@@ -26,11 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (move_uploaded_file($_FILES['main_image']['tmp_name'], $target)) {
             
-            // 1. ОБНОВЛЕННЫЙ ЗАПРОС: Добавляем колонки name_en и description_en
-            // В строке типов теперь 7 символов: "ssdssis" (s-string, d-double, i-int)
+
             $stmt = $conn->prepare("INSERT INTO products (name, name_en, price, category_id, description, description_en, main_image) VALUES (?, ?, ?, ?, ?, ?, ?)");
             
-            // 2. ОБНОВЛЕННЫЙ BIND_PARAM: Передаем 7 переменных
             $stmt->bind_param("ssdssis", 
                 $name,          // name
                 $name_en,       // name_en

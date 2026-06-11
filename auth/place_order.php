@@ -27,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
     $user_id = (int)$_SESSION['user_id'];
     $address = $conn->real_escape_string($_POST['address']);
     $phone = $conn->real_escape_string($_POST['phone']);
+    
+    // Получаем и обрабатываем метод оплаты (по умолчанию 'cash', если не передан)
+    $payment_method = isset($_POST['payment_method']) ? $conn->real_escape_string($_POST['payment_method']) : 'cash';
+    
     $order_date = date('Y-m-d H:i:s');
 
     $cart_query = "SELECT c.product_id, c.quantity, p.price 
@@ -46,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
         die(get_inline_txt('err_empty', $current_lang, $lang_dict));
     }
 
-    $sql_order = "INSERT INTO orders (user_id, order_date, total_amount, address, phone, status) 
-                  VALUES ($user_id, '$order_date', $total_amount, '$address', '$phone', 'pending')";
+    // Добавили payment_method в SQL-запрос создания заказа
+    $sql_order = "INSERT INTO orders (user_id, order_date, total_amount, address, phone, payment_method, status) 
+                  VALUES ($user_id, '$order_date', $total_amount, '$address', '$phone', '$payment_method', 'pending')";
     
     if ($conn->query($sql_order)) {
         $order_id = $conn->insert_id; 

@@ -22,7 +22,8 @@ if ($tab === 'orders') {
         FROM orders o
         JOIN users u ON o.user_id = u.id
         LEFT JOIN order_items oi ON o.id = oi.order_id
-        LEFT JOIN products p ON oi.product_variant_id = p.id
+        LEFT JOIN product_variants pv ON oi.product_variant_id = pv.id
+        LEFT JOIN products p ON pv.product_id = p.id
         GROUP BY o.id
         ORDER BY o.order_date DESC
     ");
@@ -161,20 +162,39 @@ if ($tab === 'orders') {
                             
                             <tr id="details-<?= $order['id'] ?>" style="display: none; background: #fafafa;">
                                 <td colspan="5" style="padding: 15px 25px; border-bottom: 1px solid #ddd;">
-                                    <div style="font-family: sans-serif; line-height: 1.6;">
-                                        <h4 style="margin: 0 0 10px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;"><?= __('lbl_order_content') ?>:</h4>
-                                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #555;">
-                                            <?php 
-                                            if (!empty($order['items_list'])) {
-                                                $items = explode('||', $order['items_list']);
-                                                foreach ($items as $item) {
-                                                    echo "<li style='margin-bottom: 5px;'>" . htmlspecialchars($item, ENT_QUOTES, 'UTF-8') . "</li>";
+                                    <div style="font-family: sans-serif; line-height: 1.6; display: flex; flex-direction: column; gap: 15px;">
+                                        <div>
+                                            <h4 style="margin: 0 0 5px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;">Информация о доставке:</h4>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong>Адрес:</strong> <?php echo htmlspecialchars($order['address'] ?? 'Не указан', ENT_QUOTES, 'UTF-8'); ?></p>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong>Телефон:</strong> <?php echo htmlspecialchars($order['phone'] ?? 'Не указан', ENT_QUOTES, 'UTF-8'); ?></p>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong>Способ оплаты:</strong> 
+                                                <?php 
+                                                    $method = $order['payment_method'] ?? '';
+                                                    if ($method === 'cash') {
+                                                        echo 'Наличные';
+                                                    } elseif ($method === 'card') {
+                                                        echo 'Карта';
+                                                    } else {
+                                                        echo htmlspecialchars($method ? $method : 'Не указан', ENT_QUOTES, 'UTF-8');
+                                                    }
+                                                ?>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h4 style="margin: 0 0 5px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;"><?= __('lbl_order_content') ?>:</h4>
+                                            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #555;">
+                                                <?php 
+                                                if (!empty($order['items_list'])) {
+                                                    $items = explode('||', $order['items_list']);
+                                                    foreach ($items as $item) {
+                                                        echo "<li style='margin-bottom: 5px;'>" . htmlspecialchars($item, ENT_QUOTES, 'UTF-8') . "</li>";
+                                                    }
+                                                } else {
+                                                    echo "<li style='color: #999; font-style: italic;'>" . __('lbl_no_details') . "</li>";
                                                 }
-                                            } else {
-                                                echo "<li style='color: #999; font-style: italic;'>" . __('lbl_no_details') . "</li>";
-                                            }
-                                            ?>
-                                        </ul>
+                                                ?>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

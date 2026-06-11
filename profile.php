@@ -42,15 +42,14 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
         .order-card { border: 1px solid #eee; padding: 20px; margin-bottom: 20px; }
         .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; font-size: 13px; }
         .order-item { display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-bottom: 5px; }
+        .order-shipping-info { font-size: 12px; color: #666; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; line-height: 1.5; }
         .status-pending { color: orange; }
         .status-completed { color: green; }
     </style>
 </head>
 <body>
-    <!-- --------------------------------------HEADER----------------------------------->
     <?php include 'includes/header.php'; ?>
 
-    <!-- --------------------------------------MAIN----------------------------------->
     <div class="profile-container">
         <div class="user-info">
             <h2><?= __('profile_personal_data') ?></h2>
@@ -98,7 +97,25 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
                             <span><?= __('order_total') ?>:</span>
                             <span><?php echo number_format($order['total_amount'], 0, '', ' '); ?> ₸</span>
                         </div>
-                        <div style="font-size: 11px; margin-top: 5px;" class="status-<?php echo $order['status']; ?>">
+
+                        <div class="order-shipping-info">
+                            <div><strong><?= $current_lang === 'en' ? 'Shipping Address' : 'Адрес доставки' ?>:</strong> <?php echo htmlspecialchars($order['address'] ?? ($current_lang === 'en' ? 'Not specified' : 'Не указан')); ?></div>
+                            <div><strong><?= $current_lang === 'en' ? 'Phone' : 'Телефон' ?>:</strong> <?php echo htmlspecialchars($order['phone'] ?? ($current_lang === 'en' ? 'Not specified' : 'Не указан')); ?></div>
+                            <div><strong><?= $current_lang === 'en' ? 'Payment Method' : 'Способ оплаты' ?>:</strong> 
+                                <?php 
+                                    $method = $order['payment_method'] ?? '';
+                                    if ($method === 'cash') {
+                                        echo $current_lang === 'en' ? 'Cash' : 'Наличные';
+                                    } elseif ($method === 'card') {
+                                        echo $current_lang === 'en' ? 'Card' : 'Карта';
+                                    } else {
+                                        echo htmlspecialchars($method ? $method : ($current_lang === 'en' ? 'Not specified' : 'Не указан'));
+                                    }
+                                ?>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 11px; margin-top: 10px;" class="status-<?php echo $order['status']; ?>">
                             <?= __('order_status') ?>: <?php 
                                 echo strtoupper($order['status']); 
                             ?>
@@ -111,7 +128,6 @@ $current_lang = isset($_SESSION['lang']) ? $_SESSION['lang'] : 'ru';
         </div>
     </div>
 
-    <!-- --------------------------------------FOOTER----------------------------------->
     <?php include 'includes/footer.php'; ?>
     
 </body>

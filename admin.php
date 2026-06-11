@@ -35,7 +35,7 @@ if ($tab === 'orders') {
     <meta charset="utf-8">
     <title><?= __('admin_panel_title') ?> | AURA</title>
     <link rel="stylesheet" href="css/style.css">
-        <script>
+    <script>
         const userIsLogged = <?php echo isset($_SESSION['user_id']) ? 'true' : 'false'; ?>;
         const userRole = '<?php echo $_SESSION['role'] ?? 'user'; ?>';
     </script>
@@ -164,18 +164,18 @@ if ($tab === 'orders') {
                                 <td colspan="5" style="padding: 15px 25px; border-bottom: 1px solid #ddd;">
                                     <div style="font-family: sans-serif; line-height: 1.6; display: flex; flex-direction: column; gap: 15px;">
                                         <div>
-                                            <h4 style="margin: 0 0 5px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;">Информация о доставке:</h4>
-                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong>Адрес:</strong> <?php echo htmlspecialchars($order['address'] ?? 'Не указан', ENT_QUOTES, 'UTF-8'); ?></p>
-                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong>Телефон:</strong> <?php echo htmlspecialchars($order['phone'] ?? 'Не указан', ENT_QUOTES, 'UTF-8'); ?></p>
-                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong>Способ оплаты:</strong> 
+                                            <h4 style="margin: 0 0 5px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;"><?= __('lbl_shipping_info') ?? 'Shipping Information:' ?></h4>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_address') ?? 'Address:' ?></strong> <?= htmlspecialchars($order['address'] ?? ($current_lang === 'en' ? 'Not specified' : 'Не указан'), ENT_QUOTES, 'UTF-8') ?></p>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_phone') ?? 'Phone:' ?></strong> <?= htmlspecialchars($order['phone'] ?? ($current_lang === 'en' ? 'Not specified' : 'Не указан'), ENT_QUOTES, 'UTF-8') ?></p>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_payment_method') ?? 'Payment Method:' ?></strong> 
                                                 <?php 
                                                     $method = $order['payment_method'] ?? '';
                                                     if ($method === 'cash') {
-                                                        echo 'Наличные';
+                                                        echo ($current_lang === 'en') ? 'Cash' : 'Наличные';
                                                     } elseif ($method === 'card') {
-                                                        echo 'Карта';
+                                                        echo ($current_lang === 'en') ? 'Card' : 'Карта';
                                                     } else {
-                                                        echo htmlspecialchars($method ? $method : 'Не указан', ENT_QUOTES, 'UTF-8');
+                                                        echo htmlspecialchars($method ? $method : ($current_lang === 'en' ? 'Not specified' : 'Не указан'), ENT_QUOTES, 'UTF-8');
                                                     }
                                                 ?>
                                             </p>

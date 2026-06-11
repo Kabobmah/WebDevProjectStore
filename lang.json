@@ -134,7 +134,11 @@
     "lbl_address": "Адрес:",
     "lbl_phone": "Телефон:",
     "lbl_payment_method": "Способ оплаты:",
-    "lbl_not_specified": "Не указан"
+    "lbl_not_specified": "Не указан",
+    "status_processed": "Оформлен",
+    "status_shipping": "Доставляется",
+    "status_delivered": "Доставлен",
+    "status_returned": "Возврат"
   },
   "en": {
     "nav_home": "HOME",
@@ -271,6 +275,10 @@
     "lbl_address": "Address:",
     "lbl_phone": "Phone:",
     "lbl_payment_method": "Payment Method:",
-    "lbl_not_specified": "Not specified"
+    "lbl_not_specified": "Not specified",
+    "status_processed": "Processed",
+    "status_shipping": "Shipping",
+    "status_delivered": "Delivered",
+    "status_returned": "Returned"
   }
 }

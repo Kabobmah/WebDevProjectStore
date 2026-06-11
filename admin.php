@@ -6,8 +6,24 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     die("Доступ запрещен. Вы не админ.");
 }
 
-$categories = $conn->query("SELECT * FROM categories");
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
+    $order_id = intval($_POST['order_id']);
+    $new_status = $_POST['status'];
+    
+    $allowed_statuses = ['pending', 'processed', 'shipping', 'delivered', 'canceled', 'returned'];
+    
+    if (in_array($new_status, $allowed_statuses)) {
+        $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE id = ?");
+        $stmt->bind_param("si", $new_status, $order_id);
+        $stmt->execute();
+        $stmt->close();
+        
+        header("Location: admin.php?tab=orders");
+        exit;
+    }
+}
 
+$categories = $conn->query("SELECT * FROM categories");
 $tab = $_GET['tab'] ?? 'products';
 
 $orders_query = null;
@@ -61,10 +77,26 @@ if ($tab === 'orders') {
         .orders-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
         .orders-table th, .orders-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         .orders-table th { font-weight: bold; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; background: #fafafa; }
-        .order-status { display: inline-block; padding: 4px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; }
-        .status-pending { background: #fef7e0; color: #b06000; }
-        .status-completed { background: #e6f4ea; color: #137333; }
-        .status-canceled { background: #fce8e6; color: #c5221f; }
+        
+        /* Цветовая палитра под новые статусы */
+        .status-select {
+            padding: 6px 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-weight: bold;
+            outline: none;
+        }
+        .status-select.select-pending { background: #fff3cd; color: #856404; }     /* В обработке — желтый */
+        .status-select.select-processed { background: #cce5ff; color: #004085; }   /* Оформлен — синий */
+        .status-select.select-shipping { background: #e2e3e5; color: #383d41; }    /* Доставляется — серый */
+        .status-select.select-delivered { background: #d4edda; color: #155724; }   /* Доставлен — зеленый */
+        .status-select.select-canceled { background: #f8d7da; color: #721c24; }    /* Отменен — красный */
+        .status-select.select-returned { background: #e8daef; color: #6c3483; }    /* Возврат — фиолетовый */
+        
         .no-orders { text-align: center; padding: 40px; color: #888; font-style: italic; }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,7 +116,6 @@ if ($tab === 'orders') {
         <div class="admin-section" style="border-bottom: none; padding-bottom: 0;">
             <h1><?= __('admin_add_product') ?></h1>
             <form action="auth/add_product.php" method="POST" enctype="multipart/form-data" class="admin-form">
-                
                 <select name="category_id">
                     <?php while($cat = $categories->fetch_assoc()): ?>
                         <option value="<?= $cat['id'] ?>"><?= translate_db($cat, 'name') ?></option>
@@ -135,7 +166,7 @@ if ($tab === 'orders') {
                 <tbody>
                     <?php if ($orders_query && $orders_query->num_rows > 0): ?>
                         <?php while($order = $orders_query->fetch_assoc()): ?>
-                            <tr onclick="toggleOrderDetails(<?= $order['id'] ?>)" style="cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f9f9f9'" onmouseout="this.style.background='transparent'">
+                            <tr onclick="toggleOrderDetails(event, <?= $order['id'] ?>)" style="cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f9f9f9'" onmouseout="this.style.background='transparent'">
                                 <td><strong>#<?= $order['id'] ?></strong> <span style="font-size: 10px; color: #007aff; margin-left: 5px;">▼ <?= __('lbl_more_details') ?></span></td>
                                 <td><?= htmlspecialchars($order['user_name'], ENT_QUOTES, 'UTF-8') ?></td>
                                 <td><?= date('d.m.Y H:i', strtotime($order['order_date'])) ?></td>
@@ -143,20 +174,24 @@ if ($tab === 'orders') {
                                 <td>
                                     <?php 
                                     $status = $order['status'] ?? 'pending';
-                                    $status_class = 'status-pending';
-                                    $status_text = __('status_pending');
                                     
-                                    if ($status === 'completed' || $status === 'выполнен') {
-                                        $status_class = 'status-completed';
-                                        $status_text = __('status_completed');
-                                    } elseif ($status === 'canceled' || $status === 'отменен') {
-                                        $status_class = 'status-canceled';
-                                        $status_text = __('status_canceled');
-                                    }
+                                    // Совместимость со старыми записями в БД, если они там на русском
+                                    if ($status === 'выполнен' || $status === 'доставлен') $status = 'delivered';
+                                    if ($status === 'отменен') $status = 'canceled';
+                                    if ($status === 'в обработке') $status = 'pending';
                                     ?>
-                                    <span class="order-status <?= $status_class ?>">
-                                        <?= $status_text ?>
-                                    </span>
+                                    <form method="POST" action="" style="margin: 0;">
+                                        <input type="hidden" name="update_status" value="1">
+                                        <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                        <select name="status" class="status-select select-<?= $status ?>" onchange="this.form.submit()">
+                                            <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>><?= __('status_pending') ?></option>
+                                            <option value="processed" <?= $status === 'processed' ? 'selected' : '' ?>><?= __('status_processed') ?></option>
+                                            <option value="shipping" <?= $status === 'shipping' ? 'selected' : '' ?>><?= __('status_shipping') ?></option>
+                                            <option value="delivered" <?= $status === 'delivered' ? 'selected' : '' ?>><?= __('status_delivered') ?></option>
+                                            <option value="canceled" <?= $status === 'canceled' ? 'selected' : '' ?>><?= __('status_canceled') ?></option>
+                                            <option value="returned" <?= $status === 'returned' ? 'selected' : '' ?>><?= __('status_returned') ?></option>
+                                        </select>
+                                    </form>
                                 </td>
                             </tr>
                             
@@ -164,18 +199,18 @@ if ($tab === 'orders') {
                                 <td colspan="5" style="padding: 15px 25px; border-bottom: 1px solid #ddd;">
                                     <div style="font-family: sans-serif; line-height: 1.6; display: flex; flex-direction: column; gap: 15px;">
                                         <div>
-                                            <h4 style="margin: 0 0 5px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;"><?= __('lbl_shipping_info') ?? 'Shipping Information:' ?></h4>
-                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_address') ?? 'Address:' ?></strong> <?= htmlspecialchars($order['address'] ?? ($current_lang === 'en' ? 'Not specified' : 'Не указан'), ENT_QUOTES, 'UTF-8') ?></p>
-                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_phone') ?? 'Phone:' ?></strong> <?= htmlspecialchars($order['phone'] ?? ($current_lang === 'en' ? 'Not specified' : 'Не указан'), ENT_QUOTES, 'UTF-8') ?></p>
-                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_payment_method') ?? 'Payment Method:' ?></strong> 
+                                            <h4 style="margin: 0 0 5px 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #333;"><?= __('lbl_shipping_info') ?></h4>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_address') ?></strong> <?= htmlspecialchars($order['address'] ?? __('lbl_not_specified'), ENT_QUOTES, 'UTF-8') ?></p>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_phone') ?></strong> <?= htmlspecialchars($order['phone'] ?? __('lbl_not_specified'), ENT_QUOTES, 'UTF-8') ?></p>
+                                            <p style="margin: 0; font-size: 13px; color: #555;"><strong><?= __('lbl_payment_method') ?></strong> 
                                                 <?php 
                                                     $method = $order['payment_method'] ?? '';
                                                     if ($method === 'cash') {
-                                                        echo ($current_lang === 'en') ? 'Cash' : 'Наличные';
+                                                        echo __('payment_cash');
                                                     } elseif ($method === 'card') {
-                                                        echo ($current_lang === 'en') ? 'Card' : 'Карта';
+                                                        echo __('payment_card');
                                                     } else {
-                                                        echo htmlspecialchars($method ? $method : ($current_lang === 'en' ? 'Not specified' : 'Не указан'), ENT_QUOTES, 'UTF-8');
+                                                        echo htmlspecialchars($method ? $method : __('lbl_not_specified'), ENT_QUOTES, 'UTF-8');
                                                     }
                                                 ?>
                                             </p>
@@ -208,22 +243,19 @@ if ($tab === 'orders') {
             </table>
         </div>
     <?php endif; ?>
-    
 </div>
 
 <?php include 'includes/footer.php'; ?>
 
 <script src="js/main.js"></script>
-
 <script>
-function toggleOrderDetails(orderId) {
+function toggleOrderDetails(event, orderId) {
+    if (event.target.tagName.toLowerCase() === 'select' || event.target.tagName.toLowerCase() === 'option') {
+        return;
+    }
     const detailsRow = document.getElementById('details-' + orderId);
     if (detailsRow) {
-        if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
-            detailsRow.style.display = 'table-row';
-        } else {
-            detailsRow.style.display = 'none';
-        }
+        detailsRow.style.display = (detailsRow.style.display === 'none' || detailsRow.style.display === '') ? 'table-row' : 'none';
     }
 }
 </script>

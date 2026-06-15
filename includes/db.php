@@ -1,10 +1,6 @@
 <?php
 
-$conn = new mysqli("sql209.infinityfree.com", "if0_42139428", "0WORKYA29k", "if0_42139428_webprojectstore");
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+$conn = new mysqli("localhost", "root", "", "webprojectstore");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

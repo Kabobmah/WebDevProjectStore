@@ -1,4 +1,5 @@
 <?php 
+die("PHP работает, до кода базы данных не дошли");
 session_start(); 
 require_once 'includes/db.php';
 

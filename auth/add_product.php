@@ -3,7 +3,7 @@ session_start();
 require_once '../includes/db.php';
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    die("Доступ запрещен");
+    die("Access denied");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -48,16 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: ../admin.php?success=1");
                     exit();
                 } else {
-                    echo "Ошибка при создании варианта: " . $conn->error;
+                    echo "Error creating product variant: " . $conn->error;
                 }
             } else {
-                echo "Ошибка при выполнении запроса к БД: " . $stmt->error;
+                echo "Database execution error: " . $stmt->error;
             }
         } else {
-            echo "Ошибка: Не удалось переместить файл в папку src. Проверьте права папки.";
+            echo "Error: Failed to move uploaded file to src directory. Check folder permissions.";
         }
     } else {
-        echo "Ошибка: Файл не загружен или поврежден. Код ошибки: " . $_FILES['main_image']['error'];
+        echo "Error: File upload failed or file is corrupted. Error code: " . $_FILES['main_image']['error'];
     }
 }
 ?>

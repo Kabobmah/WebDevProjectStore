@@ -1,5 +1,5 @@
 /* ============================================================
-   1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ И СБРОСЫ
+   1. global
    ============================================================ */
 * {
     margin: 0;
@@ -22,7 +22,7 @@ body {
 
 
 /* ============================================================
-   2. НАВИГАЦИЯ (NAVBAR)
+   2. NAVBAR
    ============================================================ */
 .navbar {
     position: fixed;
@@ -34,12 +34,11 @@ body {
     align-items: center;
     padding: 15px 40px;
     z-index: 1000;
-    /* Базовый градиент (перекрывается белым фоном ниже) */
+    /* gradient is overriden lower */
     background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%);
     transition: background 0.3s ease;
 }
 
-/* Модификация Navbar для Aura (Белый фон и черные элементы) */
 .navbar {
     background: #fff !important;
     border-bottom: 1px solid #f0f0f0;
@@ -50,10 +49,10 @@ body {
 
 .main-menu { display: flex; gap: 25px; }
 
-/* Стили ссылок меню с учетом правок Aura */
+
 .main-menu a {
     text-decoration: none;
-    color: #000 !important; /* Принудительно черный */
+    color: #000 !important; 
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -76,7 +75,6 @@ body {
     padding: 5px;
 }
 
-/* Иконки в навигации (черные) */
 .nav-right .icon-btn img { 
     height: 22px; 
     width: auto; 
@@ -90,7 +88,7 @@ body {
 
 
 /* ============================================================
-   3. ВЫПАДАЮЩЕЕ МЕНЮ (MEGA MENU)
+   3. MEGA MENU
    ============================================================ */
 .dropdown-content {
     position: fixed;
@@ -164,7 +162,7 @@ body {
 
 
 /* ============================================================
-   4. САЙДБАРЫ, АВТОРИЗАЦИЯ И КОРЗИНА
+   4. sidebar auth basket
    ============================================================ */
 .overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.4);
@@ -186,7 +184,7 @@ body {
     background: none; border: none; font-size: 30px; cursor: pointer; 
 }
 
-/* Стили авторизации */
+
 .sidebar-auth-choice {
     display: flex;
     gap: 30px;
@@ -256,7 +254,6 @@ body {
 
 #reg-form { display: none; }
 
-/* Стили корзины */
 .cart-items {
     max-height: 400px; 
     overflow-y: auto;  
@@ -300,7 +297,7 @@ body {
 
 
 /* ============================================================
-   5. HERO SECTION (ГЛАВНАЯ)
+   5. HERO SECTIOn
    ============================================================ */
 .hero-section {
     width: 100%;
@@ -340,7 +337,7 @@ body {
 
 
 /* ============================================================
-   6. КАТАЛОГ ТОВАРОВ (LICHI STYLE)
+   6. all items
    ============================================================ */
 .catalog-container {
     max-width: 1600px;
@@ -389,7 +386,6 @@ body {
     color: #000;
 }
 
-/* Сетка товаров */
 .product-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -403,11 +399,10 @@ body {
     flex-direction: column;
 }
 
-/* === ВЫРАВНИВАНИЕ ВЫСОТЫ КАРТИНОК И АНИМАЦИЯ === */
 .product-image-wrapper {
     position: relative;
     width: 100%;
-    aspect-ratio: 2 / 3; /* Фиксирует высоту всех карточек */
+    aspect-ratio: 2 / 3; 
     overflow: hidden;
     margin-bottom: 20px;
     margin-top: 20px;
@@ -416,17 +411,16 @@ body {
 .product-image-wrapper img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Обрезает лишнее, сохраняя высоту */
+    object-fit: cover; /
     display: block;
     transition: transform 0.5s ease;
 }
 
-/* Анимация увеличения при наведении */
+
 .product-card:hover .product-image-wrapper img {
     transform: scale(1.08); 
 }
 
-/* Кнопки действий на карточке (сердечко/корзина) */
 .product-card .actions-overlay button {
     background: rgba(255,255,255, 0.8);
     border-radius: 50%;
@@ -458,7 +452,6 @@ body {
     filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
 }
 
-/* Информация о товаре */
 .product-info { text-align: center; }
 
 .product-title {
@@ -476,7 +469,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Выбор цвета */
 .product-colors {
     display: flex;
     justify-content: center;
@@ -504,7 +496,7 @@ body {
 
 
 /* ============================================================
-   7. СТРАНИЦА ТОВАРА (ITEM.PHP)
+   7. ITEM.PHP
    ============================================================ */
 .product-actions {
     display: flex;
@@ -525,7 +517,7 @@ body {
 
 
 /* ============================================================
-   8. ФИНАЛЬНЫЙ FOOTER (LICHI STYLE)
+   8. FOOTER
    ============================================================ */
 .footer {
     display: block !important;
@@ -589,29 +581,24 @@ body {
 .app-promo { font-size: 11px; color: #999 !important; line-height: 1.4; }
 
 
+
 /* ============================================================
-   9. АДАПТИВНОСТЬ (MEDIA QUERIES)
-   ============================================================ */
-/* ============================================================
-   11. МОБИЛЬНАЯ АДАПТАЦИЯ (AURA MOBILE FIX)
+   9. AURA MOBILE FIX
    ============================================================ */
 
 /* Этот блок сработает на экранах шириной до 768px */
 @media (max-width: 768px) {
     
-    /* 1. Глобальные отступы и контейнер */
     .catalog-container {
         padding: 80px 10px 40px !important; /* Уменьшаем боковые поля */
     }
 
-    /* 2. Сетка товаров: переходим на 2 колонки */
     .product-grid {
         grid-template-columns: repeat(2, 1fr) !important; 
         gap: 20px 10px !important; /* Компактные зазоры */
         padding: 0 !important;
     }
 
-    /* 3. Картинки и Анимация */
     .product-image-wrapper {
         aspect-ratio: 2 / 3 !important; /* Сохраняем единую высоту карточек */
         margin-bottom: 8px !important;
@@ -621,13 +608,11 @@ body {
         transition: transform 0.4s ease !important;
     }
 
-    /* На мобилках анимация активируется при нажатии */
     .product-card:active .product-image-wrapper img {
         transform: scale(1.05) !important;
     }
 
-    /* 4. Кнопки действий (сердечко и корзина) */
-    /* Делаем их чуть крупнее для удобства нажатия пальцем */
+
     .product-actions {
         top: 5px !important;
         right: 5px !important;
@@ -645,14 +630,13 @@ body {
         height: 16px !important;
     }
 
-    /* 5. Текст и Цены */
     .product-info {
         padding: 0 4px !important;
     }
 
     .product-title {
-        font-size: 11px !important; /* Читабельный размер для мобилок */
-        height: 32px !important; /* Фиксируем высоту, чтобы сетка не "прыгала" */
+        font-size: 11px !important; 
+        height: 32px !important; 
         overflow: hidden;
         margin-bottom: 4px !important;
         line-height: 1.2 !important;
@@ -663,25 +647,24 @@ body {
         font-weight: 700 !important;
     }
 
-    /* 6. Хедер сайта (Навигация) */
     .navbar {
         padding: 10px !important;
-        flex-direction: column; /* Ставим логотип над меню, если не влазит */
+        flex-direction: column; 
         gap: 10px;
     }
 
     .main-menu {
-        display: flex !important; /* Возвращаем меню */
+        display: flex !important; 
         gap: 15px !important;
         justify-content: center;
         width: 100%;
-        overflow-x: auto; /* Добавляем прокрутку, если вкладок много */
+        overflow-x: auto; 
         padding-bottom: 5px;
-        white-space: nowrap; /* Чтобы пункты не переносились на новую строку */
+        white-space: nowrap; 
     }
 
     .main-menu a {
-        font-size: 10px !important; /* Чуть уменьшаем шрифт для мобилок */
+        font-size: 10px !important; 
         letter-spacing: 1px !important;
     }
 
@@ -696,8 +679,6 @@ body {
         height: 18px !important;
     }
 
-    /* Скрываем правую часть иконок или делаем их компактнее, 
-       чтобы не мешали вкладкам */
     .nav-right {
         position: absolute;
         right: 10px;
